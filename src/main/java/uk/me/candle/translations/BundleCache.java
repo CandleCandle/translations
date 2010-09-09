@@ -12,6 +12,7 @@ public class BundleCache {
 
   static Map<Class<? extends Bundle>, Map<Locale, Bundle>> cache = new HashMap<Class<? extends Bundle>, Map<Locale, Bundle>>();
 
+  
 
   @SuppressWarnings("unchecked") // cast in the return is safe.
   public static <T extends Bundle> T get(Class<T> cls, Locale locale) {

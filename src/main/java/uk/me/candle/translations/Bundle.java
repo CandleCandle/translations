@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.HashSet;
@@ -31,6 +32,14 @@ public class Bundle {
 	static final boolean LOAD_IGNORE_MISSING = true;
 	static final boolean LOAD_IGNORE_EXTRA = true;
 	static final boolean LOAD_IGNORE_PARAM_MISMATCH = true;
+
+	public Locale getLocale() {
+		return locale = Locale.ENGLISH;
+	}
+
+	public Bundle(Locale locale) {
+		this.locale = locale;
+	}
 
 	static <T extends Bundle> T load(Class<T> cls, Locale locale) throws Exception { // XXX throw more specific exceptions.
 
@@ -69,7 +78,8 @@ public class Bundle {
 		BundleClassLoader bcl = new BundleClassLoader();
 		Class<?> result = bcl.defineClass(ca.getNewName().replace("/", "."), b2);
 
-		return (T) result.newInstance();
+		Constructor c = result.getConstructor(new Class[]{Locale.class});
+		return (T) c.newInstance(locale);
 	}
 
 	public static class ImplementMethodsAdapter extends ClassAdapter {
@@ -115,6 +125,7 @@ public class Bundle {
 						mv
 						, desc
 						, translations.getProperty(name)
+						, newName
 						);
 			} else {
 				return cv.visitMethod(access, name, desc, signature, exceptions);
@@ -126,11 +137,13 @@ public class Bundle {
 	static class MethodImplementationAdapter extends MethodAdapter {
 		String translation;
 		String descriptor;
+		String generatedClassName;
 
-		public MethodImplementationAdapter(MethodVisitor mv, String descriptor, String translation) {
+		public MethodImplementationAdapter(MethodVisitor mv, String descriptor, String translation, String generatedClassName) {
 			super(mv);
 			this.translation = translation;
 			this.descriptor = descriptor;
+			this.generatedClassName = generatedClassName;
 		}
 
 		@Override
@@ -152,7 +165,14 @@ public class Bundle {
 
 		private void complexGenerate(int len) {
 			mv.visitCode();
+			mv.visitTypeInsn(Opcodes.NEW, "java/text/MessageFormat");
+			mv.visitInsn(Opcodes.DUP);
 			mv.visitLdcInsn(translation);
+			mv.visitVarInsn(Opcodes.ALOAD, 0);
+			mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, generatedClassName, "getLocale", "()Ljava/util/Locale;");
+			mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/text/MessageFormat", "<init>", "(Ljava/lang/String;Ljava/util/Locale;)V");
+			mv.visitVarInsn(Opcodes.ASTORE, 16);
+			mv.visitVarInsn(Opcodes.ALOAD, 16);
 			mv.visitIntInsn(Opcodes.BIPUSH, len);
 			mv.visitTypeInsn(Opcodes.ANEWARRAY, "java/lang/Object");
 			for (int i = 0; i < len; ++i) {
@@ -169,20 +189,7 @@ public class Bundle {
 				mv.visitVarInsn(Opcodes.ALOAD, i+1);
 				mv.visitInsn(Opcodes.AASTORE);
 			}
-			try {
-				String md = Type.getMethodDescriptor(
-						MessageFormat.class.getMethod("format", String.class, Object[].class)
-					);
-				String cd = Type.getDescriptor(MessageFormat.class);
-				String inv = "java/text/MessageFormat";
-				mv.visitMethodInsn(Opcodes.INVOKESTATIC
-						, inv
-						, "format"
-						, md
-						);
-			} catch (NoSuchMethodException ex) {
-				throw new Error(ex);
-			}
+			mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/text/MessageFormat", "format", "(Ljava/lang/Object;)Ljava/lang/String;");
 			mv.visitInsn(Opcodes.ARETURN);
 			mv.visitMaxs(0, 0); // (1, 1) // calculated due to ClassWriter.COMPUTE_MAXS
 		}

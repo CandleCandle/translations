@@ -9,10 +9,15 @@ import uk.me.candle.translations.BundleCache;
  * @author Andrew Wheat
  */
 public abstract class Foo extends Bundle {
-  public static Foo get() {
-    //return new Names$$Impl();
-    return BundleCache.get(Foo.class, Locale.ENGLISH);
-  }
 
-  public abstract String bar();
+	public static Foo get() {
+		//return new Names$$Impl();
+		return BundleCache.get(Foo.class, Locale.ENGLISH);
+	}
+
+	public Foo(Locale locale) {
+		super(locale);
+	}
+
+	public abstract String bar();
 }
