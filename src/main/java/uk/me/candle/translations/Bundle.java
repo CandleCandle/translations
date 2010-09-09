@@ -2,16 +2,12 @@ package uk.me.candle.translations;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
-import java.util.regex.Pattern;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -20,7 +16,6 @@ import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.util.TraceClassVisitor;
 
 /**
  *
@@ -28,10 +23,11 @@ import org.objectweb.asm.util.TraceClassVisitor;
  */
 public class Bundle {
 
+
 	Locale locale;
-	static final boolean LOAD_IGNORE_MISSING = true;
-	static final boolean LOAD_IGNORE_EXTRA = true;
-	static final boolean LOAD_IGNORE_PARAM_MISMATCH = true;
+	static boolean LOAD_IGNORE_MISSING = true;
+	static boolean LOAD_IGNORE_EXTRA = true;
+	static boolean LOAD_IGNORE_PARAM_MISMATCH = true;
 
 	public Locale getLocale() {
 		return locale = Locale.ENGLISH;
@@ -48,8 +44,10 @@ public class Bundle {
 				cls.getPackage().getName().replace(".", "/")
 				+ "/"
 				+ cls.getSimpleName().toLowerCase()
+				+ "_"
+				+ locale.getLanguage()
 				+ ".properties"
-				); // vary this per locale.
+				);
  		translations.load(translationsIn);
 		final Set<String> usedKeys = new HashSet<String>();
 
@@ -70,10 +68,13 @@ public class Bundle {
 		byte[] b1 = baos.toByteArray();
 		ClassReader cr = new ClassReader(b1);
 		ClassWriter cw = new ClassWriter(cr, ClassWriter.COMPUTE_FRAMES);
-		TraceClassVisitor tcv = new TraceClassVisitor(cw, new PrintWriter(System.out));
-		ImplementMethodsAdapter ca = new ImplementMethodsAdapter(tcv, translations, usedKeys);
+		ImplementMethodsAdapter ca = new ImplementMethodsAdapter(cw, translations, usedKeys);
 		cr.accept(ca, 0);
 		byte[] b2 = cw.toByteArray();
+
+		if (!LOAD_IGNORE_EXTRA) {
+			checkForExtras(translations, usedKeys);
+		}
 
 		BundleClassLoader bcl = new BundleClassLoader();
 		Class<?> result = bcl.defineClass(ca.getNewName().replace("/", "."), b2);
@@ -141,6 +142,9 @@ public class Bundle {
 
 		public MethodImplementationAdapter(MethodVisitor mv, String descriptor, String translation, String generatedClassName) {
 			super(mv);
+			if (LOAD_IGNORE_MISSING && translation == null) {
+				throw new NullPointerException("Must not have a null translation");
+			}
 			this.translation = translation;
 			this.descriptor = descriptor;
 			this.generatedClassName = generatedClassName;

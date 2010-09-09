@@ -12,7 +12,7 @@ public abstract class Foo extends Bundle {
 
 	public static Foo get() {
 		//return new Names$$Impl();
-		return BundleCache.get(Foo.class, Locale.ENGLISH);
+		return BundleCache.get(Foo.class);
 	}
 
 	public Foo(Locale locale) {

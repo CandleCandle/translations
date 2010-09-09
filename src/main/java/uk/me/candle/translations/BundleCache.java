@@ -10,28 +10,42 @@ import java.util.Map;
  */
 public class BundleCache {
 
-  static Map<Class<? extends Bundle>, Map<Locale, Bundle>> cache = new HashMap<Class<? extends Bundle>, Map<Locale, Bundle>>();
+	private static final ThreadLocal<Locale> tlsLocale = new InheritableThreadLocal<Locale>();
 
-  
+	public static Locale getThreadLocale() {
+		if (tlsLocale.get() == null) {
+			setThreadLocale(Locale.getDefault());
+		}
+		return tlsLocale.get();
+	}
 
-  @SuppressWarnings("unchecked") // cast in the return is safe.
-  public static <T extends Bundle> T get(Class<T> cls, Locale locale) {
-    if (!cache.containsKey(cls)) {
-      cache.put(cls, new HashMap<Locale, Bundle>());
-    }
-    if (!cache.get(cls).containsKey(locale)) {
-      try {
-        Bundle b = Bundle.load(cls, locale);
-        cache.get(cls).put(locale, b);
-      } catch (InstantiationException ex) {
-        throw new Error(ex);
-      } catch (IllegalAccessException ex) {
-        throw new Error(ex);
-      } catch (Exception e) {
-        throw new Error(e);
-      }
-    }
+	public static void setThreadLocale(Locale locale) {
+		tlsLocale.set(locale);
+	}
+	static Map<Class<? extends Bundle>, Map<Locale, Bundle>> cache = new HashMap<Class<? extends Bundle>, Map<Locale, Bundle>>();
 
-    return (T) cache.get(cls).get(locale);
-  }
+	public static <T extends Bundle> T get(Class<T> cls) {
+		return get(cls, getThreadLocale());
+	}
+
+	@SuppressWarnings("unchecked") // cast in the return is safe.
+	public static <T extends Bundle> T get(Class<T> cls, Locale locale) {
+		if (!cache.containsKey(cls)) {
+			cache.put(cls, new HashMap<Locale, Bundle>());
+		}
+		if (!cache.get(cls).containsKey(locale)) {
+			try {
+				Bundle b = Bundle.load(cls, locale);
+				cache.get(cls).put(locale, b);
+			} catch (InstantiationException ex) {
+				throw new Error(ex);
+			} catch (IllegalAccessException ex) {
+				throw new Error(ex);
+			} catch (Exception e) {
+				throw new Error(e);
+			}
+		}
+
+		return (T) cache.get(cls).get(locale);
+	}
 }

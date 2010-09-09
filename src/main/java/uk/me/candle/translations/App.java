@@ -11,7 +11,12 @@ import uk.me.candle.translations.foo.Foo;
 public class App {
 
 	public static void main(String[] args) {
+		System.out.println(Locale.UK);
 		System.out.println(Locale.ENGLISH);
+		System.out.println(Locale.FRANCE);
+		System.out.println(Locale.FRENCH);
+
+		BundleCache.setThreadLocale(Locale.ENGLISH);
 
 		System.out.println("trn:" + Foo.get().bar());
 
