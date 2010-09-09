@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
+import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Properties;
@@ -112,6 +113,7 @@ public class Bundle {
 							, exceptions);
 				return new MethodImplementationAdapter(
 						mv
+						, desc
 						, translations.getProperty(name)
 						);
 			} else {
@@ -123,20 +125,64 @@ public class Bundle {
 
 	static class MethodImplementationAdapter extends MethodAdapter {
 		String translation;
+		String descriptor;
 
-		public MethodImplementationAdapter(MethodVisitor mv, String translation) {
+		public MethodImplementationAdapter(MethodVisitor mv, String descriptor, String translation) {
 			super(mv);
 			this.translation = translation;
+			this.descriptor = descriptor;
 		}
 
 		@Override
 		public void visitEnd() {
-			foo();
+			int paramCount = Type.getArgumentTypes(descriptor).length;
+		if (paramCount == 0) {
+				simpleGenerate();
+			} else {
+				complexGenerate(paramCount);
+			}
 		}
 
-		private void foo() {
+		private void simpleGenerate() {
 			mv.visitCode();
 			mv.visitLdcInsn(translation);
+			mv.visitInsn(Opcodes.ARETURN);
+			mv.visitMaxs(0, 0); // (1, 1) // calculated due to ClassWriter.COMPUTE_MAXS
+		}
+
+		private void complexGenerate(int len) {
+			mv.visitCode();
+			mv.visitLdcInsn(translation);
+			mv.visitIntInsn(Opcodes.BIPUSH, len);
+			mv.visitTypeInsn(Opcodes.ANEWARRAY, "java/lang/Object");
+			for (int i = 0; i < len; ++i) {
+				mv.visitInsn(Opcodes.DUP);
+				switch(i) {
+					case 0: mv.visitInsn(Opcodes.ICONST_0); break;
+					case 1: mv.visitInsn(Opcodes.ICONST_1); break;
+					case 2: mv.visitInsn(Opcodes.ICONST_2); break;
+					case 3: mv.visitInsn(Opcodes.ICONST_3); break;
+					case 4: mv.visitInsn(Opcodes.ICONST_4); break;
+					case 5: mv.visitInsn(Opcodes.ICONST_5); break;
+					default: mv.visitIntInsn(Opcodes.BIPUSH, i);
+				}
+				mv.visitVarInsn(Opcodes.ALOAD, i+1);
+				mv.visitInsn(Opcodes.AASTORE);
+			}
+			try {
+				String md = Type.getMethodDescriptor(
+						MessageFormat.class.getMethod("format", String.class, Object[].class)
+					);
+				String cd = Type.getDescriptor(MessageFormat.class);
+				String inv = "java/text/MessageFormat";
+				mv.visitMethodInsn(Opcodes.INVOKESTATIC
+						, inv
+						, "format"
+						, md
+						);
+			} catch (NoSuchMethodException ex) {
+				throw new Error(ex);
+			}
 			mv.visitInsn(Opcodes.ARETURN);
 			mv.visitMaxs(0, 0); // (1, 1) // calculated due to ClassWriter.COMPUTE_MAXS
 		}

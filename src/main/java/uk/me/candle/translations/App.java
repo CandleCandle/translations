@@ -17,6 +17,15 @@ public class App {
     System.out.println("Password trn : " + Names.get().password());
     System.out.println("Username trn : " + Names.get().username());
     System.out.println("One param trn : " + Names.get().param("some"));
-    System.out.println("Two params trn : " + Names.get().param("some", "params"));
+    System.out.println("Two params trn : " + Names.get().params("some", "params"));
+    System.out.println("Three params trn : " + Names.get().params3("some", "params", "and another"));
+	int i = 0;
+    System.out.println("Three params trn : " + Names.get().paramsTons(
+			  i++, i++, i++
+			, i++, i++, i++
+			, i++, i++, i++
+			, i++, i++, i++
+			, i++, i++, i++
+			));
   }
 }
