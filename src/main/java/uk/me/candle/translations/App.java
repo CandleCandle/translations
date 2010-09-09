@@ -1,6 +1,7 @@
-package com.patchmanager.experiments.translations;
+package uk.me.candle.translations;
 
-import com.patchmanager.experiments.translations.foo.Foo;
+import uk.me.candle.translations.foo.Foo;
+
 
 /**
  * Hello world!

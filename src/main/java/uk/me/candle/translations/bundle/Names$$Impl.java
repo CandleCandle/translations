@@ -1,4 +1,4 @@
-package com.patchmanager.experiments.translations.bundle;
+package uk.me.candle.translations.bundle;
 
 import java.text.MessageFormat;
 

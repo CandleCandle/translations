@@ -1,4 +1,4 @@
-package com.patchmanager.experiments.translations;
+package uk.me.candle.translations;
 
 import java.util.HashMap;
 import java.util.Locale;

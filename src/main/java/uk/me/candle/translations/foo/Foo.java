@@ -1,8 +1,8 @@
-package com.patchmanager.experiments.translations.foo;
+package uk.me.candle.translations.foo;
 
-import com.patchmanager.experiments.translations.Bundle;
-import com.patchmanager.experiments.translations.BundleCache;
 import java.util.Locale;
+import uk.me.candle.translations.Bundle;
+import uk.me.candle.translations.BundleCache;
 
 /**
  *
