@@ -1,12 +1,9 @@
 package uk.me.candle.translations;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.text.Format;
 import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Locale;
