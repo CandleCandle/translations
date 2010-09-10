@@ -1,4 +1,4 @@
-package com.patchmanager.experiments.translations;
+package uk.patchmanager.experiments.translations;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

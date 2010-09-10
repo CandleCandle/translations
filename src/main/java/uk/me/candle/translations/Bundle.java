@@ -23,7 +23,6 @@ import org.objectweb.asm.Type;
  */
 public class Bundle {
 
-
 	Locale locale;
 	static boolean LOAD_IGNORE_MISSING = true;
 	static boolean LOAD_IGNORE_EXTRA = true;
@@ -49,6 +48,11 @@ public class Bundle {
 				+ ".properties"
 				);
  		translations.load(translationsIn);
+		return load(cls, locale, translations);
+  }
+
+	static <T extends Bundle> T load(Class<T> cls, Locale locale, Properties translations) throws Exception { // XXX throw more specific exceptions.
+
 		final Set<String> usedKeys = new HashSet<String>();
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -83,18 +87,18 @@ public class Bundle {
 		return (T) c.newInstance(locale);
 	}
 
-	public static class ImplementMethodsAdapter extends ClassAdapter {
-		String newName;
-		Properties translations;
-		Set<String> usedKeys;
+	private static class ImplementMethodsAdapter extends ClassAdapter {
+		private String newName;
+		private Properties translations;
+		private Set<String> usedKeys;
 
-		public ImplementMethodsAdapter(ClassVisitor cv, Properties translations, Set<String> usedKeys) {
+		ImplementMethodsAdapter(ClassVisitor cv, Properties translations, Set<String> usedKeys) {
 			super(cv);
 			this.translations = translations;
 			this.usedKeys = usedKeys;
 		}
 
-		public String getNewName() {
+		String getNewName() {
 			return newName;
 		}
 
@@ -135,12 +139,12 @@ public class Bundle {
 
 	}
 
-	static class MethodImplementationAdapter extends MethodAdapter {
-		String translation;
-		String descriptor;
-		String generatedClassName;
+	private static class MethodImplementationAdapter extends MethodAdapter {
+		private String translation;
+		private String descriptor;
+		private String generatedClassName;
 
-		public MethodImplementationAdapter(MethodVisitor mv, String descriptor, String translation, String generatedClassName) {
+		MethodImplementationAdapter(MethodVisitor mv, String descriptor, String translation, String generatedClassName) {
 			super(mv);
 			if (LOAD_IGNORE_MISSING && translation == null) {
 				throw new NullPointerException("Must not have a null translation");

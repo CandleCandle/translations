@@ -11,7 +11,6 @@ import uk.me.candle.translations.BundleCache;
 public abstract class Foo extends Bundle {
 
 	public static Foo get() {
-		//return new Names$$Impl();
 		return BundleCache.get(Foo.class);
 	}
 
