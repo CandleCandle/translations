@@ -201,6 +201,38 @@ public class BundleTest {
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
 		assertEquals("double: 7\u00a0654\u00a0321,099", b.primitiveDouble(7654321.0987d));
 	}
+
+	@Test
+	public void testOverloadObject() throws Exception {
+		Locale locale = Locale.ENGLISH;
+		Properties trns = TranslationBundle.getProperties();
+		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
+		assertEquals("overloaded Container{s=aa i=4}", b.overload(new Container("aa", 4)));
+	}
+
+	@Test
+	public void testOverloadString() throws Exception {
+		Locale locale = Locale.ENGLISH;
+		Properties trns = TranslationBundle.getProperties();
+		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
+		assertEquals("overloaded ss", b.overload("ss"));
+	}
+
+	@Test
+	public void testOverloadDouble() throws Exception {
+		Locale locale = Locale.ENGLISH;
+		Properties trns = TranslationBundle.getProperties();
+		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
+		assertEquals("overloaded 5.5", b.overload(5.5));
+	}
+
+	@Test
+	public void testOverloadInt() throws Exception {
+		Locale locale = Locale.ENGLISH;
+		Properties trns = TranslationBundle.getProperties();
+		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
+		assertEquals("overloaded 5", b.overload(5));
+	}
 }
 
 

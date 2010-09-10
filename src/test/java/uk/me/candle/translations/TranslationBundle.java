@@ -20,13 +20,14 @@ public abstract class TranslationBundle extends Bundle {
 		p.setProperty("nonObjects", "Nor are these: {0}. {1}");
 		p.setProperty("integerObject", "There {0,choice,0#are no elements|1#is one element|1<are {0,number,integer} elements}.");
 		p.setProperty("types", "o{0} z{1} b{2} c{3} s{4} i{5} l{6} f{7} d{8}");
-		p.setProperty("primativeByte", "byte: {0}");
-		p.setProperty("primativeShort", "short: {0}");
-		p.setProperty("primativeChar", "char: {0}");
-		p.setProperty("primativeInt", "int: {0}");
-		p.setProperty("primativeLong", "long: {0}");
-		p.setProperty("primativeFloat", "float: {0}");
-		p.setProperty("primativeDouble", "double: {0}");
+		p.setProperty("primitiveByte", "byte: {0}");
+		p.setProperty("primitiveShort", "short: {0}");
+		p.setProperty("primitiveChar", "char: {0}");
+		p.setProperty("primitiveInt", "int: {0}");
+		p.setProperty("primitiveLong", "long: {0}");
+		p.setProperty("primitiveFloat", "float: {0}");
+		p.setProperty("primitiveDouble", "double: {0}");
+		p.setProperty("overload", "overloaded {0}");
 
 		return p;
 	}
@@ -56,5 +57,9 @@ public abstract class TranslationBundle extends Bundle {
 	public abstract String primitiveLong(long l);
 	public abstract String primitiveFloat(float f);
 	public abstract String primitiveDouble(double d);
+	public abstract String overload(Object o);
+	public abstract String overload(String s);
+	public abstract String overload(double d);
+	public abstract String overload(int d);
 
 }

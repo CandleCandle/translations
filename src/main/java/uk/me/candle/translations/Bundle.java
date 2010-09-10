@@ -125,6 +125,8 @@ public class Bundle {
 				String desc, String signature, String[] exceptions) {
 			if ((access & Opcodes.ACC_ABSTRACT) > 0 &&
 					Type.getReturnType(desc).equals(Type.getType(String.class))) {
+	//			Type[] types = Type.getArgumentTypes(desc);
+
 				MethodVisitor mv = cv.visitMethod(
 							access - Opcodes.ACC_ABSTRACT
 							, name
@@ -133,6 +135,7 @@ public class Bundle {
 							, exceptions);
 				return new MethodImplementationAdapter(
 						mv
+						, name
 						, desc
 						, translations.getProperty(name)
 						, newName
@@ -149,10 +152,10 @@ public class Bundle {
 		private String descriptor;
 		private String generatedClassName;
 
-		MethodImplementationAdapter(MethodVisitor mv, String descriptor, String translation, String generatedClassName) {
+		MethodImplementationAdapter(MethodVisitor mv, String name, String descriptor, String translation, String generatedClassName) {
 			super(mv);
 			if (LOAD_IGNORE_MISSING && translation == null) {
-				throw new NullPointerException("Must not have a null translation");
+				throw new NullPointerException("Method '" + name + "' Must not have a null translation");
 			}
 			this.translation = translation;
 			this.descriptor = descriptor;
