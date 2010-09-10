@@ -32,7 +32,7 @@ public class Bundle {
 	static boolean LOAD_IGNORE_PARAM_MISMATCH = true;
 
 	public Locale getLocale() {
-		return locale = Locale.ENGLISH;
+		return locale;
 	}
 
 	public Bundle(Locale locale) {

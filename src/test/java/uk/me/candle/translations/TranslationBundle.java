@@ -16,7 +16,7 @@ public abstract class TranslationBundle extends Bundle {
 		p.setProperty("oneParam", "one parameter, and it is {0}");
 		p.setProperty("twoParams", "two more params: {0} {1}");
 		p.setProperty("lotsOfParams", "Fifteen params: {0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12} {13} {14}");
-		p.setProperty("nonObject", "This isn't a strict java.lang.Object: {0}");
+		p.setProperty("nonObject", "This isn''t a strict java.lang.Object: {0}");
 		p.setProperty("nonObjects", "Nor are these: {0}. {1}");
 		p.setProperty("integerObject", "There {0,choice,0#are no elements|1#is one element|1<are {0,number,integer} elements}.");
 		p.setProperty("types", "o{0} z{1} b{2} c{3} s{4} i{5} l{6} f{7} d{8}");

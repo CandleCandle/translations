@@ -167,7 +167,7 @@ public class BundleTest {
 		Locale locale = Locale.FRENCH;
 		Properties trns = TranslationBundle.getProperties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
-		assertEquals("float: 10.000,5", b.primativeFloat(10000.5f));
+		assertEquals("float: 10\u00a0000,5", b.primativeFloat(10000.5f));
 	}
 
 	@Test
@@ -191,7 +191,8 @@ public class BundleTest {
 		Locale locale = Locale.ENGLISH;
 		Properties trns = TranslationBundle.getProperties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
-		assertEquals("double: 7,654,321.0987", b.primativeDouble(7654321.0987d));
+		String s = b.primativeDouble(7654321.0987d);
+		assertEquals("double: 7,654,321.099", b.primativeDouble(7654321.0987d));
 	}
 
 	@Test
@@ -199,7 +200,7 @@ public class BundleTest {
 		Locale locale = Locale.FRENCH;
 		Properties trns = TranslationBundle.getProperties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
-		assertEquals("double: 7.654.321,0987", b.primativeDouble(7654321.0987d));
+		assertEquals("double: 7\u00a0654\u00a0321,099", b.primativeDouble(7654321.0987d));
 	}
 }
 
