@@ -1,12 +1,16 @@
 package uk.me.candle.translations;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.Format;
+import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.Set;
 import org.objectweb.asm.ClassAdapter;
@@ -17,8 +21,6 @@ import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.util.CheckClassAdapter;
-import org.objectweb.asm.util.TraceClassVisitor;
 
 /**
  *
@@ -26,7 +28,7 @@ import org.objectweb.asm.util.TraceClassVisitor;
  */
 public class Bundle {
 
-	Locale locale;
+	final Locale locale;
 	static boolean LOAD_IGNORE_MISSING = true;
 	static boolean LOAD_IGNORE_EXTRA = true;
 	static boolean LOAD_IGNORE_PARAM_MISMATCH = true;
@@ -39,8 +41,11 @@ public class Bundle {
 		this.locale = locale;
 	}
 
-	static <T extends Bundle> T load(Class<T> cls, Locale locale) throws Exception { // XXX throw more specific exceptions.
-
+	static <T extends Bundle> T load(Class<T> cls, Locale locale)
+			throws IllegalAccessException, InstantiationException
+			, NoSuchMethodException, IOException
+			, IllegalArgumentException, InvocationTargetException
+			{
 		final Properties translations = new Properties();
 		InputStream translationsIn = cls.getClassLoader().getResourceAsStream(
 				cls.getPackage().getName().replace(".", "/")
@@ -52,10 +57,29 @@ public class Bundle {
 				);
  		translations.load(translationsIn);
 		return load(cls, locale, translations);
-  }
+	}
 
-	static <T extends Bundle> T load(Class<T> cls, Locale locale, Properties translations) throws Exception { // XXX throw more specific exceptions.
+	static <T extends Bundle> T load(Class<T> cls, Locale locale, Properties translations)
+			throws IllegalAccessException, InstantiationException
+			, NoSuchMethodException, IOException
+			, IllegalArgumentException, InvocationTargetException
+			{
+		return load(cls, locale, translations, new BundleConfiguration(LOAD_IGNORE_MISSING, LOAD_IGNORE_EXTRA, LOAD_IGNORE_PARAM_MISMATCH));
+	}
 
+	static <T extends Bundle> T load(Class<T> cls, Locale locale, Properties translations, boolean ignoreMissing, boolean ignoreExtra, boolean ignoreParamMismatch)
+			throws IllegalAccessException, InstantiationException
+			, NoSuchMethodException, IOException
+			, IllegalArgumentException, InvocationTargetException
+			{
+		return load(cls, locale, translations, new BundleConfiguration(ignoreMissing, ignoreExtra, ignoreParamMismatch));
+	}
+
+	static <T extends Bundle> T load(Class<T> cls, Locale locale, Properties translations, BundleConfiguration configuration)
+			throws IllegalAccessException, InstantiationException
+			, NoSuchMethodException, IOException
+			, IllegalArgumentException, InvocationTargetException
+			{
 		final Set<String> usedKeys = new HashSet<String>();
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -71,18 +95,26 @@ public class Bundle {
 			}
 		}
 
-
 		byte[] b1 = baos.toByteArray();
 		ClassReader cr = new ClassReader(b1);
 		ClassWriter cw = new ClassWriter(cr, ClassWriter.COMPUTE_FRAMES);
-		//TraceClassVisitor tcv = new TraceClassVisitor(cw, new PrintWriter(System.out));
-		//CheckClassAdapter cca = new CheckClassAdapter(cw);
-		ImplementMethodsAdapter ca = new ImplementMethodsAdapter(cw, translations, usedKeys);
+		ImplementMethodsAdapter ca = new ImplementMethodsAdapter(cw, translations, usedKeys, locale, configuration);
 		cr.accept(ca, 0);
 		byte[] b2 = cw.toByteArray();
 
-		if (!LOAD_IGNORE_EXTRA) {
-			checkForExtras(translations, usedKeys);
+		if (!configuration.isIgnoreExtra()) {
+			Set<String> extras = checkForExtras(translations, usedKeys);
+
+			if (!extras.isEmpty()) {
+				StringBuilder sb = new StringBuilder();
+				for (String s : extras) {
+					if (sb.length() != 0) {
+						sb.append(", ");
+					}
+					sb.append(s);
+				}
+				throw new MissingResourceException("Extra keys in the bundle: " + sb.toString(), cls.getName(), sb.toString());
+			}
 		}
 
 		BundleClassLoader bcl = new BundleClassLoader();
@@ -94,13 +126,16 @@ public class Bundle {
 
 	private static class ImplementMethodsAdapter extends ClassAdapter {
 		private String newName;
+		private String baseName;
 		private Properties translations;
 		private Set<String> usedKeys;
+		private BundleConfiguration configuration;
 
-		ImplementMethodsAdapter(ClassVisitor cv, Properties translations, Set<String> usedKeys) {
+		ImplementMethodsAdapter(ClassVisitor cv, Properties translations, Set<String> usedKeys, Locale locale, BundleConfiguration configuration) {
 			super(cv);
 			this.translations = translations;
 			this.usedKeys = usedKeys;
+			this.configuration = configuration;
 		}
 
 		String getNewName() {
@@ -111,6 +146,7 @@ public class Bundle {
 		public void visit(int version, int access, String name,
 				String signature, String superName, String[] interfaces) {
 			newName = name + "__Impl";
+			baseName = name;
 			cv.visit(Opcodes.V1_6
 					, access - Opcodes.ACC_ABSTRACT // remove the abstract.
 					, newName // new name
@@ -125,7 +161,23 @@ public class Bundle {
 				String desc, String signature, String[] exceptions) {
 			if ((access & Opcodes.ACC_ABSTRACT) > 0 &&
 					Type.getReturnType(desc).equals(Type.getType(String.class))) {
-	//			Type[] types = Type.getArgumentTypes(desc);
+				Type[] types = Type.getArgumentTypes(desc);
+				String translation = translations.getProperty(name);
+				// If we are ignoring the
+				if (translation == null) {
+					if (!configuration.isIgnoreMissing()) {
+						throw new MissingResourceException("The translation file for " + "" + " is missing a key.", baseName, name);
+					}
+					translation = name;
+				}
+				if (!configuration.isIgnoreParamMismatch()) {
+					MessageFormat f = new MessageFormat(translation);
+					if (f.getFormatsByArgumentIndex().length != types.length) {
+						throw new MissingResourceException("The parameter lengths did not match method: " + types.length + " translation: " + f.getFormatsByArgumentIndex().length, baseName, name);
+					}
+				}
+
+				usedKeys.add(name); // add the key for later use - checking for configuration.isIgnoreExtra().
 
 				MethodVisitor mv = cv.visitMethod(
 							access - Opcodes.ACC_ABSTRACT
@@ -137,7 +189,7 @@ public class Bundle {
 						mv
 						, name
 						, desc
-						, translations.getProperty(name)
+						, translation
 						, newName
 						);
 			} else {
@@ -273,6 +325,7 @@ public class Bundle {
 					throw new IllegalArgumentException("Invalid type: " + t);
 			}
 		}
+
 		private int countRegisters(Type[] types) {
 			int c = 0;
 			for (Type t : types) {
@@ -283,13 +336,54 @@ public class Bundle {
 	}
 
 	/**
-	 * Checks to see if the string translation has all the required {x} fields for the method signature.
-	 * @param translation
-	 * @param method
-	 * @return
+	 * Container for any configuration options.
+	 *
+	 * Note that if "ignoreMissing" is true and "ignoreParamMismatch" is false then the class
+	 * generation will fail for keys that have arguments.
 	 */
-	private static boolean checkMethodParamsAndStringFields(String translation, Method method) {
-		return true;
+	private static class BundleConfiguration {
+		private boolean ignoreMissing;
+		private boolean ignoreExtra;
+		private boolean ignoreParamMismatch;
+
+		public BundleConfiguration(boolean ignoreMissing, boolean ignoreExtra, boolean ignoreParamMismatch) {
+			this.ignoreMissing = ignoreMissing;
+			this.ignoreExtra = ignoreExtra;
+			this.ignoreParamMismatch = ignoreParamMismatch;
+		}
+
+		/**
+		 * Are extra keys in the source properties file ignored?
+		 * @return
+		 */
+		public boolean isIgnoreExtra() {
+			return ignoreExtra;
+		}
+
+		/**
+		 * Are missing keys in the properties file ignored?
+		 * @return
+		 */
+		public boolean isIgnoreMissing() {
+			return ignoreMissing;
+		}
+
+		/**
+		 * Are mismatches between parameter counts ignored?
+		 * @return
+		 */
+		public boolean isIgnoreParamMismatch() {
+			return ignoreParamMismatch;
+		}
+	}
+
+	/**
+	 * Allows class definition from a byte array.
+	 */
+	private static class BundleClassLoader extends ClassLoader {
+		public Class<?> defineClass(String name, byte[] b) {
+			return defineClass(name, b, 0, b.length);
+		}
 	}
 
 	/**
@@ -297,29 +391,9 @@ public class Bundle {
 	 * @param translations
 	 * @param usedKeys
 	 */
-	private static void checkForExtras(Properties translations, Set<String> usedKeys) {
-		Set<String> extras = new HashSet<String>();
-		for (String o : translations.stringPropertyNames()) {
-			if (!usedKeys.contains(o)) {
-				extras.add(o);
-			}
-		}
-		if (!extras.isEmpty()) {
-			StringBuilder sb = new StringBuilder();
-			for (String s : extras) {
-				if (sb.length() != 0) {
-					sb.append(", ");
-				}
-				sb.append(s);
-			}
-			throw new RuntimeException("Extra keys in the bundle: " + sb.toString());
-		}
-	}
-}
-
-class BundleClassLoader extends ClassLoader {
-
-	public Class<?> defineClass(String name, byte[] b) {
-		return defineClass(name, b, 0, b.length);
+	private static Set<String> checkForExtras(Properties translations, Set<String> usedKeys) {
+		Set<String> extras = new HashSet<String>(translations.stringPropertyNames());
+		extras.removeAll(usedKeys);
+		return extras;
 	}
 }

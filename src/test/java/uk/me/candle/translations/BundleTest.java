@@ -1,6 +1,7 @@
 package uk.me.candle.translations;
 
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.Properties;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -28,14 +29,56 @@ public class BundleTest {
 		assertEquals("Rien de truc", b.noParams());
 	}
 
-	@Test
-	public void testMissing() {
-		// XXX need to organise the exceptions
+	@Test(expected=MissingResourceException.class)
+	public void testMissing() throws Exception {
+		Locale locale = Locale.ENGLISH;
+		Properties trns = new Properties();
+		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns, false, false, false);
+		assertEquals("there are no parameters", b.noParams());
 	}
 
 	@Test
-	public void testExtra() {
-		// XXX need to organise the exceptions
+	public void testMissingAllowed() throws Exception {
+		Locale locale = Locale.ENGLISH;
+		Properties trns = new Properties();
+		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns, true, true, true);
+		assertEquals("noParams", b.noParams());
+	}
+
+	@Test(expected=MissingResourceException.class)
+	public void testParamMisMatchA() throws Exception {
+		Locale locale = Locale.ENGLISH;
+		Properties trns = TranslationBundle.getProperties();
+		trns.setProperty("noParams", "{0}, {1}");
+		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns, false, false, false);
+		assertEquals("there are no parameters", b.noParams());
+	}
+
+	@Test(expected=MissingResourceException.class)
+	public void testParamMisMatchB() throws Exception {
+		Locale locale = Locale.ENGLISH;
+		Properties trns = TranslationBundle.getProperties();
+		trns.setProperty("oneParam", "no parameters");
+		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns, false, false, false);
+		assertEquals("no parameters", b.oneParam("ss"));
+	}
+
+	@Test
+	public void testParamMisMatchBAllowed() throws Exception {
+		Locale locale = Locale.ENGLISH;
+		Properties trns = TranslationBundle.getProperties();
+		trns.setProperty("oneParam", "no parameters");
+		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
+		assertEquals("no parameters", b.oneParam("ss"));
+	}
+
+	@Test(expected=MissingResourceException.class)
+	public void testExtra() throws Exception {
+		Locale locale = Locale.ENGLISH;
+		Properties trns = TranslationBundle.getProperties();
+		trns.setProperty("this is extra", "more then enough");
+		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns, false, false, false);
+		assertEquals("there are no parameters", b.noParams());
 	}
 
 	@Test

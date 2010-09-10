@@ -1,5 +1,7 @@
 package uk.me.candle.translations;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -37,12 +39,18 @@ public class BundleCache {
 			try {
 				Bundle b = Bundle.load(cls, locale);
 				cache.get(cls).put(locale, b);
+			} catch (NoSuchMethodException ex) {
+				throw new Error(ex);
+			} catch (IOException ex) {
+				throw new Error(ex);
+			} catch (IllegalArgumentException ex) {
+				throw new Error(ex);
+			} catch (InvocationTargetException ex) {
+				throw new Error(ex);
 			} catch (InstantiationException ex) {
 				throw new Error(ex);
 			} catch (IllegalAccessException ex) {
 				throw new Error(ex);
-			} catch (Exception e) {
-				throw new Error(e);
 			}
 		}
 
