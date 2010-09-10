@@ -19,6 +19,7 @@ public abstract class TranslationBundle extends Bundle {
 		p.setProperty("nonObject", "This isn't a strict java.lang.Object: {0}");
 		p.setProperty("nonObjects", "Nor are these: {0}. {1}");
 		p.setProperty("integerObject", "There {0,choice,0#are no elements|1#is one element|1<are {0,number,integer} elements}.");
+		p.setProperty("types", "o{0} z{1} b{2} c{3} s{4} i{5} l{6} f{7} d{8}");
 		p.setProperty("primativeByte", "byte: {0}");
 		p.setProperty("primativeShort", "short: {0}");
 		p.setProperty("primativeChar", "char: {0}");
@@ -47,6 +48,7 @@ public abstract class TranslationBundle extends Bundle {
 	public abstract String integerObject(Integer i);
 	public abstract String nonObject(String s);
 	public abstract String nonObjects(String s, Container c);
+	public abstract String types(Object o, boolean z, byte b, char c, short s, int i, long l, float f, double d);
 	public abstract String primativeByte(byte b);
 	public abstract String primativeShort(short s);
 	public abstract String primativeChar(char c);

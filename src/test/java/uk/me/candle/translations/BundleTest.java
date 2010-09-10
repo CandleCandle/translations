@@ -51,7 +51,7 @@ public class BundleTest {
 		Locale locale = Locale.ENGLISH;
 		Properties trns = TranslationBundle.getProperties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
-		assertEquals("two more params: {0} {1}", b.twoParams("aa", "bb"));
+		assertEquals("two more params: aa bb", b.twoParams("aa", "bb"));
 	}
 
 	@Test
@@ -59,7 +59,7 @@ public class BundleTest {
 		Locale locale = Locale.ENGLISH;
 		Properties trns = TranslationBundle.getProperties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
-		assertEquals("Fifteen params: a, b, c, d, e, f, g, h, i, j, k, l, m, n, o", b.lotsOfParams("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"));
+		assertEquals("Fifteen params: a b c d e f g h i j k l m n o", b.lotsOfParams("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"));
 	}
 
 	@Test
@@ -87,6 +87,15 @@ public class BundleTest {
 		Properties trns = TranslationBundle.getProperties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
 		assertEquals("Nor are these: aa. Container{s=bb i=3}", b.nonObjects("aa", new Container("bb", 3)));
+	}
+
+	@Test
+	public void testTypes() throws Exception {
+		Locale locale = Locale.ENGLISH;
+		Properties trns = TranslationBundle.getProperties();
+		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
+		assertEquals("oo ztrue b4 cr s54 i1,111 l99,999,999,999 f3.2 d4.6"
+				, b.types("o", true, (byte)4, 'r', (short)54, 1111, 99999999999L, 3.2F, 4.6D));
 	}
 
 	@Test
@@ -126,7 +135,7 @@ public class BundleTest {
 		Locale locale = Locale.ENGLISH;
 		Properties trns = TranslationBundle.getProperties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
-		assertEquals("long: 99999999999999", b.primativeLong(99999999999999L));
+		assertEquals("long: 99,999,999,999,999", b.primativeLong(99999999999999L));
 	}
 
 	@Test
@@ -134,7 +143,7 @@ public class BundleTest {
 		Locale locale = Locale.ENGLISH;
 		Properties trns = TranslationBundle.getProperties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
-		assertEquals("float 1.2", b.primativeFloat(1.2f));
+		assertEquals("float: 1.2", b.primativeFloat(1.2f));
 	}
 
 	@Test
@@ -142,7 +151,7 @@ public class BundleTest {
 		Locale locale = Locale.ENGLISH;
 		Properties trns = TranslationBundle.getProperties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
-		assertEquals("float 10,000.5", b.primativeFloat(10000.5f));
+		assertEquals("float: 10,000.5", b.primativeFloat(10000.5f));
 	}
 
 	@Test
@@ -150,7 +159,7 @@ public class BundleTest {
 		Locale locale = Locale.FRENCH;
 		Properties trns = TranslationBundle.getProperties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
-		assertEquals("float 1,2", b.primativeFloat(1.2f));
+		assertEquals("float: 1,2", b.primativeFloat(1.2f));
 	}
 
 	@Test
@@ -158,7 +167,7 @@ public class BundleTest {
 		Locale locale = Locale.FRENCH;
 		Properties trns = TranslationBundle.getProperties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
-		assertEquals("float 10.000,5", b.primativeFloat(10000.5f));
+		assertEquals("float: 10.000,5", b.primativeFloat(10000.5f));
 	}
 
 	@Test

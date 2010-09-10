@@ -2,6 +2,7 @@ package uk.me.candle.translations;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.HashSet;
@@ -16,6 +17,8 @@ import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.util.CheckClassAdapter;
+import org.objectweb.asm.util.TraceClassVisitor;
 
 /**
  *
@@ -72,6 +75,8 @@ public class Bundle {
 		byte[] b1 = baos.toByteArray();
 		ClassReader cr = new ClassReader(b1);
 		ClassWriter cw = new ClassWriter(cr, ClassWriter.COMPUTE_FRAMES);
+		//TraceClassVisitor tcv = new TraceClassVisitor(cw, new PrintWriter(System.out));
+		//CheckClassAdapter cca = new CheckClassAdapter(cw);
 		ImplementMethodsAdapter ca = new ImplementMethodsAdapter(cw, translations, usedKeys);
 		cr.accept(ca, 0);
 		byte[] b2 = cw.toByteArray();
@@ -156,11 +161,11 @@ public class Bundle {
 
 		@Override
 		public void visitEnd() {
-			int paramCount = Type.getArgumentTypes(descriptor).length;
-		if (paramCount == 0) {
+			Type[] types = Type.getArgumentTypes(descriptor);
+		if (types.length == 0) {
 				simpleGenerate();
 			} else {
-				complexGenerate(paramCount);
+				complexGenerate(types);
 			}
 		}
 
@@ -171,7 +176,8 @@ public class Bundle {
 			mv.visitMaxs(0, 0); // (1, 1) // calculated due to ClassWriter.COMPUTE_MAXS
 		}
 
-		private void complexGenerate(int len) {
+		private void complexGenerate(Type[] types) {
+			int registers = countRegisters(types);
 			mv.visitCode();
 			mv.visitTypeInsn(Opcodes.NEW, "java/text/MessageFormat");
 			mv.visitInsn(Opcodes.DUP);
@@ -179,29 +185,98 @@ public class Bundle {
 			mv.visitVarInsn(Opcodes.ALOAD, 0);
 			mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, generatedClassName, "getLocale", "()Ljava/util/Locale;");
 			mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/text/MessageFormat", "<init>", "(Ljava/lang/String;Ljava/util/Locale;)V");
-			mv.visitVarInsn(Opcodes.ASTORE, 16);
-			mv.visitVarInsn(Opcodes.ALOAD, 16);
-			mv.visitIntInsn(Opcodes.BIPUSH, len);
+			mv.visitVarInsn(Opcodes.ASTORE, registers+2);
+			mv.visitVarInsn(Opcodes.ALOAD, registers+2);
+			mv.visitIntInsn(Opcodes.BIPUSH, types.length);
 			mv.visitTypeInsn(Opcodes.ANEWARRAY, "java/lang/Object");
-			for (int i = 0; i < len; ++i) {
-				mv.visitInsn(Opcodes.DUP);
-				switch(i) {
-					case 0: mv.visitInsn(Opcodes.ICONST_0); break;
-					case 1: mv.visitInsn(Opcodes.ICONST_1); break;
-					case 2: mv.visitInsn(Opcodes.ICONST_2); break;
-					case 3: mv.visitInsn(Opcodes.ICONST_3); break;
-					case 4: mv.visitInsn(Opcodes.ICONST_4); break;
-					case 5: mv.visitInsn(Opcodes.ICONST_5); break;
-					default: mv.visitIntInsn(Opcodes.BIPUSH, i);
-				}
-				mv.visitVarInsn(Opcodes.ALOAD, i+1);
-				mv.visitInsn(Opcodes.AASTORE);
+			int regCount = 0;
+			for (int i = 0; i < types.length; ++i) {
+				boxIfNeededAndAddToArray(types[i], i, regCount);
+				regCount += getRegisters(types[i]);
 			}
 			mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/text/MessageFormat", "format", "(Ljava/lang/Object;)Ljava/lang/String;");
 			mv.visitInsn(Opcodes.ARETURN);
 			mv.visitMaxs(0, 0); // (1, 1) // calculated due to ClassWriter.COMPUTE_MAXS
 		}
 
+		private void boxIfNeededAndAddToArray(Type t, int idx, int reg) {
+			mv.visitInsn(Opcodes.DUP);
+			switch(idx) {
+				case 0: mv.visitInsn(Opcodes.ICONST_0); break;
+				case 1: mv.visitInsn(Opcodes.ICONST_1); break;
+				case 2: mv.visitInsn(Opcodes.ICONST_2); break;
+				case 3: mv.visitInsn(Opcodes.ICONST_3); break;
+				case 4: mv.visitInsn(Opcodes.ICONST_4); break;
+				case 5: mv.visitInsn(Opcodes.ICONST_5); break;
+				default: mv.visitIntInsn(Opcodes.BIPUSH, idx); break;
+			}
+			switch (t.getSort()) {
+				case Type.BOOLEAN:
+				case Type.BYTE:
+				case Type.CHAR:
+				case Type.SHORT:
+				case Type.INT:
+					mv.visitVarInsn(Opcodes.ILOAD, reg+1); break;
+				case Type.LONG:
+					mv.visitVarInsn(Opcodes.LLOAD, reg+1); break;
+				case Type.FLOAT:
+					mv.visitVarInsn(Opcodes.FLOAD, reg+1); break;
+				case Type.DOUBLE:
+					mv.visitVarInsn(Opcodes.DLOAD, reg+1); break;
+				case Type.OBJECT:
+					mv.visitVarInsn(Opcodes.ALOAD, reg+1); break;
+				default:
+					throw new IllegalArgumentException("Invalid type: " + t);
+			}
+			switch (t.getSort()) {
+				case Type.BOOLEAN:
+					mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;"); break;
+				case Type.BYTE:
+					mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Byte", "valueOf", "(B)Ljava/lang/Byte;"); break;
+				case Type.CHAR:
+					mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Character", "valueOf", "(C)Ljava/lang/Character;"); break;
+				case Type.SHORT:
+					mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Short", "valueOf", "(S)Ljava/lang/Short;"); break;
+				case Type.INT:
+					mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;"); break;
+				case Type.LONG:
+					mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Long", "valueOf", "(J)Ljava/lang/Long;"); break;
+				case Type.FLOAT:
+					mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Float", "valueOf", "(F)Ljava/lang/Float;"); break;
+				case Type.DOUBLE:
+					mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Double", "valueOf", "(D)Ljava/lang/Double;"); break;
+				case Type.OBJECT:
+					break;
+				default:
+					throw new IllegalArgumentException("Invalid type: " + t);
+			}
+			mv.visitInsn(Opcodes.AASTORE);
+		}
+
+		private int getRegisters(Type t) {
+			switch (t.getSort()) {
+				case Type.BOOLEAN:
+				case Type.BYTE:
+				case Type.CHAR:
+				case Type.SHORT:
+				case Type.OBJECT:
+				case Type.INT:
+				case Type.FLOAT:
+					return 1;
+				case Type.DOUBLE:
+				case Type.LONG:
+					return 2;
+				default:
+					throw new IllegalArgumentException("Invalid type: " + t);
+			}
+		}
+		private int countRegisters(Type[] types) {
+			int c = 0;
+			for (Type t : types) {
+				c += getRegisters(t);
+			}
+			return c;
+		}
 	}
 
 	/**

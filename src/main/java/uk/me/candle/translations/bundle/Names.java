@@ -37,4 +37,6 @@ public abstract class Names extends Bundle {
 			Object o10, Object o11, Object o12,
 			Object o13, Object o14, Object o15
 			);
+
+	public abstract String types(Object o, boolean z, byte b, char c, short s, int i, long l, float f, double d);
 }

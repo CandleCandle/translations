@@ -67,4 +67,12 @@ public class Names$$Impl extends Names {
 			o13, o14, o15
 		});
 	}
+	
+	@Override
+	public String types(Object o, boolean z, byte b, char c, short s, int i, long l, float f, double d) {
+		MessageFormat mf = new MessageFormat("o{0} z{1} b{2} c{3} s{4} i{5} l{6} f{7} d(8)", getLocale());
+		return mf.format(new Object[]{
+			o,z,b,c,s,i,l,f,d
+		});
+	}
 }
