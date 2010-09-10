@@ -99,108 +99,107 @@ public class BundleTest {
 	}
 
 	@Test
-	public void testPrimativeByte() throws Exception {
+	public void testPrimitiveByte() throws Exception {
 		Locale locale = Locale.ENGLISH;
 		Properties trns = TranslationBundle.getProperties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
-		assertEquals("byte: 4", b.primativeByte((byte) 4));
+		assertEquals("byte: 4", b.primitiveByte((byte) 4));
 	}
 
 	@Test
-	public void testPrimativeShort() throws Exception {
+	public void testPrimitiveShort() throws Exception {
 		Locale locale = Locale.ENGLISH;
 		Properties trns = TranslationBundle.getProperties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
-		assertEquals("short: 5", b.primativeShort((short) 5));
+		assertEquals("short: 5", b.primitiveShort((short) 5));
 	}
 
 	@Test
-	public void testPrimativeChar() throws Exception {
+	public void testPrimitiveChar() throws Exception {
 		Locale locale = Locale.ENGLISH;
 		Properties trns = TranslationBundle.getProperties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
-		assertEquals("char: a", b.primativeChar('a'));
+		assertEquals("char: a", b.primitiveChar('a'));
 	}
 
 	@Test
-	public void testPrimativeInt() throws Exception {
+	public void testPrimitiveInt() throws Exception {
 		Locale locale = Locale.ENGLISH;
 		Properties trns = TranslationBundle.getProperties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
-		assertEquals("int: 66", b.primativeInt(66));
+		assertEquals("int: 66", b.primitiveInt(66));
 	}
 
 	@Test
-	public void testPrimativeLong() throws Exception {
+	public void testPrimitiveLong() throws Exception {
 		Locale locale = Locale.ENGLISH;
 		Properties trns = TranslationBundle.getProperties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
-		assertEquals("long: 99,999,999,999,999", b.primativeLong(99999999999999L));
+		assertEquals("long: 99,999,999,999,999", b.primitiveLong(99999999999999L));
 	}
 
 	@Test
-	public void testPrimativeFloat() throws Exception {
+	public void testPrimitiveFloat() throws Exception {
 		Locale locale = Locale.ENGLISH;
 		Properties trns = TranslationBundle.getProperties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
-		assertEquals("float: 1.2", b.primativeFloat(1.2f));
+		assertEquals("float: 1.2", b.primitiveFloat(1.2f));
 	}
 
 	@Test
-	public void testPrimativeFloat2() throws Exception {
+	public void testPrimitiveFloat2() throws Exception {
 		Locale locale = Locale.ENGLISH;
 		Properties trns = TranslationBundle.getProperties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
-		assertEquals("float: 10,000.5", b.primativeFloat(10000.5f));
+		assertEquals("float: 10,000.5", b.primitiveFloat(10000.5f));
 	}
 
 	@Test
-	public void testPrimativeFloatFr() throws Exception {
+	public void testPrimitiveFloatFr() throws Exception {
 		Locale locale = Locale.FRENCH;
 		Properties trns = TranslationBundle.getProperties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
-		assertEquals("float: 1,2", b.primativeFloat(1.2f));
+		assertEquals("float: 1,2", b.primitiveFloat(1.2f));
 	}
 
 	@Test
-	public void testPrimativeFloatFr2() throws Exception {
+	public void testPrimitiveFloatFr2() throws Exception {
 		Locale locale = Locale.FRENCH;
 		Properties trns = TranslationBundle.getProperties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
-		assertEquals("float: 10\u00a0000,5", b.primativeFloat(10000.5f));
+		assertEquals("float: 10\u00a0000,5", b.primitiveFloat(10000.5f));
 	}
 
 	@Test
-	public void testPrimativeDouble() throws Exception {
+	public void testPrimitiveDouble() throws Exception {
 		Locale locale = Locale.ENGLISH;
 		Properties trns = TranslationBundle.getProperties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
-		assertEquals("double: 4.56", b.primativeDouble(4.56d));
+		assertEquals("double: 4.56", b.primitiveDouble(4.56d));
 	}
 
 	@Test
-	public void testPrimativeDoubleFr() throws Exception {
+	public void testPrimitiveDoubleFr() throws Exception {
 		Locale locale = Locale.FRENCH;
 		Properties trns = TranslationBundle.getProperties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
-		assertEquals("double: 4,56", b.primativeDouble(4.56d));
+		assertEquals("double: 4,56", b.primitiveDouble(4.56d));
 	}
 
 	@Test
-	public void testPrimativeDouble2() throws Exception {
+	public void testPrimitiveDouble2() throws Exception {
 		Locale locale = Locale.ENGLISH;
 		Properties trns = TranslationBundle.getProperties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
-		String s = b.primativeDouble(7654321.0987d);
-		assertEquals("double: 7,654,321.099", b.primativeDouble(7654321.0987d));
+		assertEquals("double: 7,654,321.099", b.primitiveDouble(7654321.0987d));
 	}
 
 	@Test
-	public void testPrimativeDoubleFr2() throws Exception {
+	public void testPrimitiveDoubleFr2() throws Exception {
 		Locale locale = Locale.FRENCH;
 		Properties trns = TranslationBundle.getProperties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
-		assertEquals("double: 7\u00a0654\u00a0321,099", b.primativeDouble(7654321.0987d));
+		assertEquals("double: 7\u00a0654\u00a0321,099", b.primitiveDouble(7654321.0987d));
 	}
 }
 

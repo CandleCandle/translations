@@ -49,12 +49,12 @@ public abstract class TranslationBundle extends Bundle {
 	public abstract String nonObject(String s);
 	public abstract String nonObjects(String s, Container c);
 	public abstract String types(Object o, boolean z, byte b, char c, short s, int i, long l, float f, double d);
-	public abstract String primativeByte(byte b);
-	public abstract String primativeShort(short s);
-	public abstract String primativeChar(char c);
-	public abstract String primativeInt(int i);
-	public abstract String primativeLong(long l);
-	public abstract String primativeFloat(float f);
-	public abstract String primativeDouble(double d);
+	public abstract String primitiveByte(byte b);
+	public abstract String primitiveShort(short s);
+	public abstract String primitiveChar(char c);
+	public abstract String primitiveInt(int i);
+	public abstract String primitiveLong(long l);
+	public abstract String primitiveFloat(float f);
+	public abstract String primitiveDouble(double d);
 
 }
