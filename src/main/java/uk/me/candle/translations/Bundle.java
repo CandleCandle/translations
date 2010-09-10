@@ -62,7 +62,7 @@ import org.objectweb.asm.Type;
  *bar=Moe''s Tavern
  *zit=zap
  *pony=my horsie''s name is {0}
- *iHaveSomeOranges=I have {0,choice,0#are no oranges|1#is one orange|1&lt;are {0,number,integer} oranges}.
+ *iHaveSomeOranges=I have {0,choice,0#are no oranges|1# one orange|1&lt;are {0,number,integer} oranges}.
  *iHaveAFewArguments=o={0} z={1} b={2} c={3} s={4} i={5} l={6} f={7} d={8}
  * }</pre>
  *
@@ -93,7 +93,7 @@ import org.objectweb.asm.Type;
  * {@code
  *I know a bar called Moe's Tavern
  *my horsie's name is Sparky
- *I have is one orange.
+ *I have one orange.
  *o=obj z=true b=4 c=q s=6 i=1 l=9,999 f=9.5 d=4.4
  * }
  *
@@ -201,21 +201,7 @@ public class Bundle {
 			{
 		final Set<String> usedKeys = new HashSet<String>();
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		{
-			InputStream classIn = Bundle.class.getClassLoader().getResourceAsStream(
-					cls.getName().replace(".", "/")
-					+ ".class"
-					);
-			byte[] buff = new byte[1024];
-			int read = -1;
-			while (0 < (read = classIn.read(buff))) {
-				baos.write(buff, 0, read);
-			}
-		}
-
-		byte[] b1 = baos.toByteArray();
-		ClassReader cr = new ClassReader(b1);
+		ClassReader cr = new ClassReader(cls.getName());
 		ClassWriter cw = new ClassWriter(cr, ClassWriter.COMPUTE_FRAMES);
 		ImplementMethodsAdapter ca = new ImplementMethodsAdapter(cw, translations, usedKeys, locale, configuration);
 		cr.accept(ca, 0);
@@ -287,7 +273,7 @@ public class Bundle {
 				// If we are ignoring the
 				if (translation == null) {
 					if (!configuration.isIgnoreMissing()) {
-						throw new MissingResourceException("The translation file for " + "" + " is missing a key.", baseName, name);
+						throw new MissingResourceException("The translation file for " + locale + " is missing a key.", baseName, name);
 					}
 					translation = name;
 				}
