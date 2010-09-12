@@ -99,6 +99,9 @@ import org.objectweb.asm.Type;
  * @author Andrew Wheat
  */
 public class Bundle {
+	public enum LoadIgnoreMissing { YES, NO };
+	public enum LoadIgnoreExtra { YES, NO };
+	public enum LoadIgnoreParameterMisMatch { YES, NO };
 
 	/**
 	 * The locale for this bundle. Required for formatting numbers in the subclasses.
@@ -108,9 +111,9 @@ public class Bundle {
 	 *
 	 * default value for new creations if the options are not specified
 	 */
-	public static boolean LOAD_IGNORE_MISSING = true;
-	public static boolean LOAD_IGNORE_EXTRA = true;
-	public static boolean LOAD_IGNORE_PARAM_MISMATCH = true;
+	public static LoadIgnoreMissing LOAD_IGNORE_MISSING = LoadIgnoreMissing.YES;
+	public static LoadIgnoreExtra LOAD_IGNORE_EXTRA = LoadIgnoreExtra.YES;
+	public static LoadIgnoreParameterMisMatch LOAD_IGNORE_PARAM_MISMATCH = LoadIgnoreParameterMisMatch.YES;
 
 	public Locale getLocale() {
 		return locale;
@@ -173,7 +176,7 @@ public class Bundle {
 	 * Constructs a bundle implementation for the class and locale with the specified options.
 	 * @see #load(java.lang.Class, java.util.Locale, java.util.Properties, boolean, boolean, boolean)
 	 */
-	public static <T extends Bundle> T load(Class<T> cls, Locale locale, boolean ignoreMissing, boolean ignoreExtra, boolean ignoreParamMismatch)
+	public static <T extends Bundle> T load(Class<T> cls, Locale locale, LoadIgnoreMissing ignoreMissing, LoadIgnoreExtra ignoreExtra, LoadIgnoreParameterMisMatch ignoreParamMismatch)
 			throws IllegalAccessException, InstantiationException
 			, NoSuchMethodException, IOException
 			, IllegalArgumentException, InvocationTargetException
@@ -204,7 +207,7 @@ public class Bundle {
 	 * @throws IllegalArgumentException 
 	 * @throws InvocationTargetException if the constructor for the bundle throws an exception.
 	 */
-	static <T extends Bundle> T load(Class<T> cls, Locale locale, Properties translations, boolean ignoreMissing, boolean ignoreExtra, boolean ignoreParamMismatch)
+	static <T extends Bundle> T load(Class<T> cls, Locale locale, Properties translations, LoadIgnoreMissing ignoreMissing, LoadIgnoreExtra ignoreExtra, LoadIgnoreParameterMisMatch ignoreParamMismatch)
 			throws IllegalAccessException, InstantiationException
 			, NoSuchMethodException, IOException
 			, IllegalArgumentException, InvocationTargetException
@@ -225,7 +228,7 @@ public class Bundle {
 		cr.accept(ca, 0);
 		byte[] b2 = cw.toByteArray();
 
-		if (!configuration.isIgnoreExtra()) {
+		if (!configuration.getIgnoreExtra().equals(LoadIgnoreExtra.YES)) {
 			Set<String> extras = checkForExtras(translations, usedKeys);
 
 			if (!extras.isEmpty()) {
@@ -290,12 +293,12 @@ public class Bundle {
 				String translation = translations.getProperty(name);
 				// If we are ignoring the
 				if (translation == null) {
-					if (!configuration.isIgnoreMissing()) {
+					if (configuration.getIgnoreMissing().equals(LoadIgnoreMissing.NO)) {
 						throw new MissingResourceException("The translation file for " + baseName + " in the language: " + locale + " is missing a key: " + name, baseName, name);
 					}
 					translation = name;
 				}
-				if (!configuration.isIgnoreParamMismatch()) {
+				if (configuration.getIgnoreParamMismatch().equals(LoadIgnoreParameterMisMatch.NO)) {
 					MessageFormat f = new MessageFormat(translation);
 					if (f.getFormatsByArgumentIndex().length != types.length) {
 						throw new MissingResourceException("The parameter lengths did not match method: " + types.length + " translation: " + f.getFormatsByArgumentIndex().length, baseName, name);
@@ -331,9 +334,6 @@ public class Bundle {
 
 		MethodImplementationAdapter(MethodVisitor mv, String name, String descriptor, String translation, String generatedClassName) {
 			super(mv);
-			if (LOAD_IGNORE_MISSING && translation == null) {
-				throw new NullPointerException("Method '" + name + "' Must not have a null translation");
-			}
 			this.translation = translation;
 			this.descriptor = descriptor;
 			this.generatedClassName = generatedClassName;
@@ -467,11 +467,11 @@ public class Bundle {
 	 * generation will fail for keys that have arguments.
 	 */
 	private static class BundleConfiguration {
-		private boolean ignoreMissing;
-		private boolean ignoreExtra;
-		private boolean ignoreParamMismatch;
+		private final LoadIgnoreMissing ignoreMissing;
+		private final LoadIgnoreExtra ignoreExtra;
+		private final LoadIgnoreParameterMisMatch ignoreParamMismatch;
 
-		public BundleConfiguration(boolean ignoreMissing, boolean ignoreExtra, boolean ignoreParamMismatch) {
+		public BundleConfiguration(LoadIgnoreMissing ignoreMissing, LoadIgnoreExtra ignoreExtra, LoadIgnoreParameterMisMatch ignoreParamMismatch) {
 			this.ignoreMissing = ignoreMissing;
 			this.ignoreExtra = ignoreExtra;
 			this.ignoreParamMismatch = ignoreParamMismatch;
@@ -481,7 +481,7 @@ public class Bundle {
 		 * Are extra keys in the source properties file ignored?
 		 * @return
 		 */
-		public boolean isIgnoreExtra() {
+		public LoadIgnoreExtra getIgnoreExtra() {
 			return ignoreExtra;
 		}
 
@@ -489,7 +489,7 @@ public class Bundle {
 		 * Are missing keys in the properties file ignored?
 		 * @return
 		 */
-		public boolean isIgnoreMissing() {
+		public LoadIgnoreMissing getIgnoreMissing() {
 			return ignoreMissing;
 		}
 
@@ -497,7 +497,7 @@ public class Bundle {
 		 * Are mismatches between parameter counts ignored?
 		 * @return
 		 */
-		public boolean isIgnoreParamMismatch() {
+		public LoadIgnoreParameterMisMatch getIgnoreParamMismatch() {
 			return ignoreParamMismatch;
 		}
 	}

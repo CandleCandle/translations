@@ -33,7 +33,11 @@ public class BundleTest {
 	public void testMissing() throws Exception {
 		Locale locale = Locale.ENGLISH;
 		Properties trns = new Properties();
-		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns, false, false, false);
+		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns,
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO
+				);
 		assertEquals("there are no parameters", b.noParams());
 	}
 
@@ -41,7 +45,11 @@ public class BundleTest {
 	public void testMissingAllowed() throws Exception {
 		Locale locale = Locale.ENGLISH;
 		Properties trns = new Properties();
-		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns, true, true, true);
+		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns,
+				Bundle.LoadIgnoreMissing.YES,
+				Bundle.LoadIgnoreExtra.YES,
+				Bundle.LoadIgnoreParameterMisMatch.YES
+				);
 		assertEquals("noParams", b.noParams());
 	}
 
@@ -50,7 +58,11 @@ public class BundleTest {
 		Locale locale = Locale.ENGLISH;
 		Properties trns = TranslationBundle.getProperties();
 		trns.setProperty("noParams", "{0}, {1}");
-		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns, false, false, false);
+		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns,
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO
+				);
 		assertEquals("there are no parameters", b.noParams());
 	}
 
@@ -59,7 +71,11 @@ public class BundleTest {
 		Locale locale = Locale.ENGLISH;
 		Properties trns = TranslationBundle.getProperties();
 		trns.setProperty("oneParam", "no parameters");
-		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns, false, false, false);
+		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns,
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO
+				);
 		assertEquals("no parameters", b.oneParam("ss"));
 	}
 
@@ -77,7 +93,11 @@ public class BundleTest {
 		Locale locale = Locale.ENGLISH;
 		Properties trns = TranslationBundle.getProperties();
 		trns.setProperty("this is extra", "more then enough");
-		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns, false, false, false);
+		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns,
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO
+				);
 		assertEquals("there are no parameters", b.noParams());
 	}
 
