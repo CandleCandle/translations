@@ -291,7 +291,7 @@ public class Bundle {
 				// If we are ignoring the
 				if (translation == null) {
 					if (!configuration.isIgnoreMissing()) {
-						throw new MissingResourceException("The translation file for " + locale + " is missing a key: " + name, baseName, name);
+						throw new MissingResourceException("The translation file for " + baseName + " in the language: " + locale + " is missing a key: " + name, baseName, name);
 					}
 					translation = name;
 				}
