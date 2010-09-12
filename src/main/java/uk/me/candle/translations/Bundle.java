@@ -134,6 +134,13 @@ public class Bundle {
 			, NoSuchMethodException, IOException
 			, IllegalArgumentException, InvocationTargetException
 			{
+		return load(cls, locale, LOAD_IGNORE_MISSING, LOAD_IGNORE_EXTRA, LOAD_IGNORE_PARAM_MISMATCH);
+	}
+	static <T extends Bundle> T load(Class<T> cls, Locale locale, BundleConfiguration configuration)
+			throws IllegalAccessException, InstantiationException
+			, NoSuchMethodException, IOException
+			, IllegalArgumentException, InvocationTargetException
+			{
 		final Properties translations = new Properties();
 		final String resourcePath =
 				cls.getPackage().getName().replace(".", "/")
@@ -147,7 +154,7 @@ public class Bundle {
 			throw new MissingResourceException("There was no resource for the path: " + resourcePath, cls.getName(), "");
 		}
  		translations.load(translationsIn);
-		return load(cls, locale, translations);
+		return load(cls, locale, translations, configuration);
 	}
 
 	/**
@@ -160,6 +167,19 @@ public class Bundle {
 			, IllegalArgumentException, InvocationTargetException
 			{
 		return load(cls, locale, translations, new BundleConfiguration(LOAD_IGNORE_MISSING, LOAD_IGNORE_EXTRA, LOAD_IGNORE_PARAM_MISMATCH));
+	}
+
+	/**
+	 * Constructs a bundle implementation for the class and locale with the specified options.
+	 * @see #load(java.lang.Class, java.util.Locale, java.util.Properties, boolean, boolean, boolean)
+	 */
+	public static <T extends Bundle> T load(Class<T> cls, Locale locale, boolean ignoreMissing, boolean ignoreExtra, boolean ignoreParamMismatch)
+			throws IllegalAccessException, InstantiationException
+			, NoSuchMethodException, IOException
+			, IllegalArgumentException, InvocationTargetException
+			{
+		return load(cls, locale, new BundleConfiguration(LOAD_IGNORE_MISSING, LOAD_IGNORE_EXTRA, LOAD_IGNORE_PARAM_MISMATCH));
+
 	}
 
 	/**
@@ -180,6 +200,7 @@ public class Bundle {
 	 * @throws IllegalAccessException if the bundle class is not public and abstract
 	 * @throws InstantiationException if the new bundle cannot be created
 	 * @throws NoSuchMethodException if there is no available constructor
+	 * @throws IOException if the source class cannot be loaded.
 	 * @throws IllegalArgumentException 
 	 * @throws InvocationTargetException if the constructor for the bundle throws an exception.
 	 */
