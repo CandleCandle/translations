@@ -178,7 +178,7 @@ public class Bundle {
 			, NoSuchMethodException, IOException
 			, IllegalArgumentException, InvocationTargetException
 			{
-		return load(cls, locale, new BundleConfiguration(LOAD_IGNORE_MISSING, LOAD_IGNORE_EXTRA, LOAD_IGNORE_PARAM_MISMATCH));
+		return load(cls, locale, new BundleConfiguration(ignoreMissing, ignoreExtra, ignoreParamMismatch));
 
 	}
 
