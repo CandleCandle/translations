@@ -148,7 +148,7 @@ public class Bundle {
 		final String resourcePath =
 				cls.getPackage().getName().replace(".", "/")
 				+ "/"
-				+ cls.getSimpleName().toLowerCase()
+				+ cls.getSimpleName()
 				+ "_"
 				+ locale.getLanguage()
 				+ ".properties";
