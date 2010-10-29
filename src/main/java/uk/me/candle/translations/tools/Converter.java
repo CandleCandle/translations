@@ -1,12 +1,16 @@
 package uk.me.candle.translations.tools;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 
 /**
- *
+ * One instance of this class represents one Bundle.
+ * If multiple bundles are needed, create multiple instances and add
+ * the code to them.
+ * 
+ * This does assume that multiple bundles won't be needed in each source file.
+ * 
  * @author andrew
  * @param <P> output type for the code result (File/String/?)
  * @param <Q> output type for the bundle code result (File/String/?)
@@ -33,6 +37,13 @@ public abstract class Converter<P, Q> {
 	}
 
 	public void execute() {
+		// 1) for each code input, parse and create I18nString instances
+		// 2) collect the duplicated values
+		// 3) go through the code inputs and create the new code with the method calls
+		// 4) prepare the properties
+		// 5) prepare the bundle class.
+
+
 		throw new UnsupportedOperationException("");
 	}
 
@@ -42,10 +53,19 @@ public abstract class Converter<P, Q> {
 		List<I18nString> rest;
 	}
 
+	/**
+	 * @return the replacement code
+	 */
 	public abstract P getCodeResult();
 
+	/**
+	 * @return the code that represents the bundle class.
+	 */
 	public abstract Q getBundleClassResult();
 
+	/**
+	 * @return the properties file that contains the translations.
+	 */
 	public abstract Properties getBundlePropertiesResult();
 
 	/**
@@ -100,9 +120,15 @@ public abstract class Converter<P, Q> {
 		}
 	}
 
+	/**
+	 * represents a literal String in the code, i.e. "Foo"
+	 */
 	static class LiteralStringPortion extends StringPortion {
 	}
 
+	/**
+	 * represents a variable that is used to create compund strings, i.e. "foo" + bar
+	 */
 	static class VariableStringPortion extends StringPortion {
 	}
 }
