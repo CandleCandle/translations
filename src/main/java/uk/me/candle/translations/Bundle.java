@@ -68,9 +68,9 @@ import org.objectweb.asm.Type;
  * the language code appended to the end.
  *
  * In the above example, the Foo bundle will look for the English properties file at
- * {@code /com/example/foo/foo_en.properties }
+ * {@code /com/example/foo/Foo_en.properties }
  * the French will be:
- * {@code /com/example/foo/foo_fr.properties }
+ * {@code /com/example/foo/Foo_fr.properties }
  *
  * Usage of the bundle is intended to be as simple as possible.
  *{@code
