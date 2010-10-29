@@ -217,7 +217,7 @@ public class ConverterTest {
 
 	private void executeTest(String code, String expectedCode, String expectedBundle, Properties expectedProperties) {
 		StringConverter converter = new StringConverter(BUNDLE_PACKAGE_NAME, BUNDLE_CLASS_NAME);
-		converter.addCode(new ByteArrayInputStream(code.getBytes()));
+		converter.addCode(code);
 		converter.execute();
 		String actualCode = converter.getCodeResult();
 		String actualBundle = converter.getBundleClassResult();

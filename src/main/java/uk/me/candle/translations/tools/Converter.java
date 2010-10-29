@@ -24,6 +24,10 @@ public abstract class Converter<P, Q> {
 		throw new UnsupportedOperationException("");
 	}
 
+	public void addCode(String code) {
+		throw new UnsupportedOperationException("");
+	}
+
 	public String getBundleClassName() {
 		return bundleClassName;
 	}
