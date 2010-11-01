@@ -1,8 +1,11 @@
 package uk.me.candle.translations.tools;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * One instance of this class represents one Bundle.
@@ -18,6 +21,10 @@ import java.util.Properties;
 public abstract class Converter<P, Q> {
 	String bundleClassName;
 	String bundlePackageName;
+
+	StringBuilder replacementCode;
+	StringBuilder bundleCode;
+	Properties translations;
 
 	public Converter(String bundleClassName, String bundlePackageName) {
 		this.bundleClassName = bundleClassName;
@@ -43,6 +50,10 @@ public abstract class Converter<P, Q> {
 		// 4) prepare the properties
 		// 5) prepare the bundle class.
 
+		List<I18nString> strings = getAllTokens();
+
+		Set<I18nString> unique = new HashSet<I18nString>(strings);
+
 
 		throw new UnsupportedOperationException("");
 	}
@@ -52,6 +63,8 @@ public abstract class Converter<P, Q> {
 		I18nString example;
 		List<I18nString> rest;
 	}
+
+	protected abstract List<I18nString> getAllTokens();
 
 	/**
 	 * @return the replacement code
@@ -72,7 +85,7 @@ public abstract class Converter<P, Q> {
 	 * defines an occurance of a string in the source code.
 	 * equals() is defined as each java.lang.String segment being equal.
 	 */
-	static class I18nString {
+	public static class I18nString {
 
 		private List<StringPortion> segments;
 		private boolean hasVariable;
@@ -82,7 +95,7 @@ public abstract class Converter<P, Q> {
 		 * @return the method name for the key.
 		 */
 		String getI18nKey() {
-			throw new UnsupportedOperationException("");
+			return getI18nValue().replaceAll(" .*", "").toLowerCase(); // XXX quick hack.
 		}
 
 		String getI18nValue() {
@@ -96,7 +109,12 @@ public abstract class Converter<P, Q> {
 				return sb.toString();
 			}
 		}
-
+		public int getFirstPosition() {
+			return segments.get(0).getStart();
+		}
+		public int getLastPosition() {
+			return segments.get(segments.size()-1).getEnd();
+		}
 		String getPropertiesLine() {
 			return getI18nKey() + "=" + getI18nValue();
 		}
@@ -108,27 +126,102 @@ public abstract class Converter<P, Q> {
 		String getMethodParameters() {
 			throw new UnsupportedOperationException("");
 		}
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final I18nString other = (I18nString) obj;
+			if (other.segments.size() != segments.size()) {
+				return false;
+			}
+
+			for (int i = 0; i < segments.size(); ++i) {
+				StringPortion t = segments.get(i);
+				StringPortion o = other.segments.get(i);
+				if (!t.getClass().equals(o.getClass())) {
+					return false;
+				}
+				if (t instanceof VariableStringPortion) {
+					return true; // FIXME check types? or just resolve to 'Object'
+				} else if (t instanceof LiteralStringPortion) {
+					if (!((LiteralStringPortion)t).getValue().equals(((LiteralStringPortion)o).getValue())) {
+						return false;
+					}
+				}
+			}
+
+			return true;
+		}
+		@Override
+		public int hashCode() {
+			int hash = 7;
+			hash = 67 * hash + (this.segments != null ? this.segments.hashCode() : 0);
+			return hash;
+		}
+
+
+
 	}
 
-	static class StringPortion {
+	public abstract static class StringPortion {
 
-		int start;
-		int end;
-
-		String getValue() {
-			throw new UnsupportedOperationException();
+		private int start;
+		private int end;
+		public StringPortion(int start, int end) {
+			this.start = start;
+			this.end = end;
 		}
+
+		abstract String getValue();
+		public int getEnd() {
+			return end;
+		}
+		public int getStart() {
+			return start;
+		}
+
 	}
 
 	/**
 	 * represents a literal String in the code, i.e. "Foo"
 	 */
-	static class LiteralStringPortion extends StringPortion {
+	public static class LiteralStringPortion extends StringPortion {
+		String value;
+		public LiteralStringPortion(int start, int end, String value) {
+			super(start, end);
+			this.value = value;
+		}
+		@Override
+		String getValue() {
+			return value;
+		}
 	}
 
 	/**
-	 * represents a variable that is used to create compund strings, i.e. "foo" + bar
+	 * represents a variable that is used to create compound strings, i.e. "foo" + bar
 	 */
-	static class VariableStringPortion extends StringPortion {
+	public static class VariableStringPortion extends StringPortion {
+		String name;
+		String type;
+
+		public VariableStringPortion(int start, int end, String name, String type) {
+			super(start, end);
+			this.name = name;
+			this.type = type;
+		}
+		public String getName() {
+			return name;
+		}
+		public String getType() {
+			return type;
+		}
+		@Override
+		String getValue() {
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
 	}
 }
