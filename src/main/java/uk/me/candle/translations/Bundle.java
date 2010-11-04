@@ -22,14 +22,13 @@ import org.objectweb.asm.Type;
 /**
  * Handles translations.
  *
- * General usage:
+ * General usage notes:
  *
  * <ul>
  * <li>The bundle class must be public and abstract</li>
- * <li>Methods with no arguments the raw translation is returned.</li>
+ * <li>for methods with no arguments the raw translation is returned.</li>
  * <li>Methods with arguments are passed to MessageFormat to format with the translation and the
  * arguments of the method as the parameters of the MessageFormat</li>
- * <li>Methods must be abstract and have a String return value.</li>
  * <li>Methods must be abstract and have a String return value.</li>
  * <li>Classes must have an accessible constructor that takes a java.util.Locale.</li>
  * </ul>
@@ -56,15 +55,16 @@ import org.objectweb.asm.Type;
  * }</pre>
  * Bundle resource:
  * <pre>{@code
- *bar=Moe''s Tavern
+ *bar=Moe's Tavern
  *zit=zap
  *pony=my horsie''s name is {0}
  *iHaveSomeOranges=I have {0,choice,0#are no oranges|1# one orange|1&lt;are {0,number,integer} oranges}.
  *iHaveAFewArguments=o={0} z={1} b={2} c={3} s={4} i={5} l={6} f={7} d={8}
  * }</pre>
+ * Observe that it is the the MessageFormat syntax requires '' to output a single ' character.<br /><br />
  *
  * When the class is loaded (without a properties specified in the load() method)  it will look for a properties
- * file in the same package as the class, with the same name as the class, but with the classname all lower-case, and
+ * file in the same package as the class, with the same name as the class and
  * the language code appended to the end.
  *
  * In the above example, the Foo bundle will look for the English properties file at
@@ -73,7 +73,7 @@ import org.objectweb.asm.Type;
  * {@code /com/example/foo/Foo_fr.properties }
  *
  * Usage of the bundle is intended to be as simple as possible.
- *{@code
+ * <pre>{@code
  *public class App {
  *
  *  public static void main(String[] args) {
@@ -84,16 +84,45 @@ import org.objectweb.asm.Type;
  *    System.out.println(Foo.get().iHaveAFewArguments("obj", true, (byte)4, 'q', (short)6, 1, 9999, 9.5f, 4.4d));
  *  }
  *}
- * }
+ * }</pre>
  *
  * This will produce the output:
- * {@code
+ * <pre>{@code
  *I know a bar called Moe's Tavern
  *my horsie's name is Sparky
  *I have one orange.
  *o=obj z=true b=4 c=q s=6 i=1 l=9,999 f=9.5 d=4.4
- * }
+ * }</pre>
  *
+ * A unit test for the bundle could be constructed using:
+ * <pre>{@code
+ *	&#40;Test
+ *	public void testFooBundle_en() throws Exception {
+ *		// Load the bundle with the check flags enabled.
+ *		// this will throw an exception if there is an error
+ *		// with either the abstract Class or the properties file
+ *		Foo foo = Bundle.load(Foo.class, Locale.ENGLISH,
+ *				LoadIgnoreMissing.NO,
+ *				LoadIgnoreExtra.NO,
+ *				LoadIgnoreParameterMisMatch.NO);
+ *		assertNotNull(foo.bar());
+ *	}
+ * }</pre>
+ *
+ * Using the above bundle, the 'bar' method would be implemented as:
+ * <pre>{@code
+ * public String bar() {
+ *   return "Moe's Tavern";
+ * }
+ * }</pre>
+ *
+ * The 'pony' method would be implemented as:
+ * <pre>{@code
+ * public String pony(String s) {
+ *   MessageFormat m = new MessageFormat("my horsie''s name is {0}", getLocale());
+ *   return m.format(new Object[]{s});
+ * }
+ * }</pre>
  *
  * @see java.text.MessageFormat
  * @author Andrew Wheat
@@ -125,7 +154,7 @@ public class Bundle {
 		}
 		this.locale = locale;
 	}
-
+	
 	/**
 	 * Constructs a bundle implementation for the class and locale.
 	 * @throws MissingResourceException if the resource cannot be found.
@@ -174,7 +203,7 @@ public class Bundle {
 
 	/**
 	 * Constructs a bundle implementation for the class and locale with the specified options.
-	 * @see #load(java.lang.Class, java.util.Locale, java.util.Properties, boolean, boolean, boolean)
+	 * @see #load(java.lang.Class, java.util.Locale, java.util.Properties, uk.me.candle.translations.Bundle.LoadIgnoreMissing, uk.me.candle.translations.Bundle.LoadIgnoreExtra, uk.me.candle.translations.Bundle.LoadIgnoreParameterMisMatch)
 	 */
 	public static <T extends Bundle> T load(Class<T> cls, Locale locale, LoadIgnoreMissing ignoreMissing, LoadIgnoreExtra ignoreExtra, LoadIgnoreParameterMisMatch ignoreParamMismatch)
 			throws IllegalAccessException, InstantiationException
