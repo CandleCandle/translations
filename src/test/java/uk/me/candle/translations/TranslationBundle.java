@@ -28,6 +28,7 @@ public abstract class TranslationBundle extends Bundle {
 		p.setProperty("primitiveFloat", "float: {0}");
 		p.setProperty("primitiveDouble", "double: {0}");
 		p.setProperty("overload", "overloaded {0}");
+    p.setProperty("subPatternParameter", "{0} {1}{2,choice,0#|1# flag}{3,choice,0#|0< - {4}}");
 
 		return p;
 	}
@@ -61,5 +62,5 @@ public abstract class TranslationBundle extends Bundle {
 	public abstract String overload(String s);
 	public abstract String overload(double d);
 	public abstract String overload(int d);
-
+  public abstract String subPatternParameter(String programName, String programVersion, int portable, int profileCount, String activeProfileName);
 }

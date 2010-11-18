@@ -1,5 +1,6 @@
 package uk.me.candle.translations;
 
+import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.Properties;
@@ -296,6 +297,32 @@ public class BundleTest {
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
 		assertEquals("overloaded 5", b.overload(5));
 	}
-}
 
+  @Test
+  public void testSubParameter() throws Exception {
+		Locale locale = Locale.ENGLISH;
+		Properties trns = TranslationBundle.getProperties();
+		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
+    assertEquals("name version", b.subPatternParameter("name", "version", 0, 0, null));
+		assertEquals("name version - profile", b.subPatternParameter("name", "version", 0, 1, "profile"));
+		assertEquals("name version flag", b.subPatternParameter("name", "version", 1, 0, null));
+		assertEquals("name version flag - profile", b.subPatternParameter("name", "version", 1, 1, "profile"));
+  }
+
+  @Test
+  public void testSubParameterFailBundle() throws Exception {
+    //{0} {1}{2,choice,1# portable}{3,choice,1< - {4}}
+		Locale locale = Locale.ENGLISH;
+		Properties trns = SubPatternBundle.getProperties();
+		SubPatternBundle b = Bundle.load(SubPatternBundle.class, locale, trns,
+            Bundle.LoadIgnoreMissing.NO,
+            Bundle.LoadIgnoreExtra.NO,
+            Bundle.LoadIgnoreParameterMisMatch.NO
+            );
+		assertEquals("name version", b.subPatternParameter("name", "version", 0, 0, null));
+		assertEquals("name version - profile", b.subPatternParameter("name", "version", 0, 1, "profile"));
+		assertEquals("name version flag", b.subPatternParameter("name", "version", 1, 0, null));
+		assertEquals("name version flag - profile", b.subPatternParameter("name", "version", 1, 1, "profile"));
+  }
+}
 
