@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ChoiceFormat;
+import java.text.Format;
 import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Locale;
@@ -329,8 +331,9 @@ public class Bundle {
 				}
 				if (configuration.getIgnoreParamMismatch().equals(LoadIgnoreParameterMisMatch.NO)) {
 					MessageFormat f = new MessageFormat(translation);
-					if (f.getFormatsByArgumentIndex().length != types.length) {
-						throw new MissingResourceException("The parameter lengths did not match method: " + types.length + " translation: " + f.getFormatsByArgumentIndex().length, baseName, name);
+          int fieldCount = countFields(f);
+					if (fieldCount != types.length) {
+						throw new MissingResourceException("The parameter lengths did not match method: " + types.length + " translation: " + fieldCount + " baseName: " + baseName + " translation: " + translation, baseName, name);
 					}
 				}
 
@@ -354,6 +357,34 @@ public class Bundle {
 			}
 		}
 
+    /**
+     * Count the maximum fields that are used in a message format
+     * note that a ChoiceFormat can have sub-formats: {0,choice,0#{1}|1#{2}}
+     * has three parameters, yet the basic messageFormat.getFormatsByArgumentIndex().length
+     * call will have the value of one. This is because the sub-formats are
+     * handled in a recursive way. Since this is the case, this method needs
+     * to do something similar to count the fields used.
+     * @param messageFormat message format instance to count the maximum field number used.
+     * @return the maximum number of fields used in
+     */
+    private int countFields(MessageFormat messageFormat) {
+      Format[] formats = messageFormat.getFormatsByArgumentIndex();
+      int count = messageFormat.getFormatsByArgumentIndex().length;
+
+      for (Format ff : formats) {
+        if (ff instanceof ChoiceFormat) {
+          ChoiceFormat cf = (ChoiceFormat)ff;
+          for (Object o : cf.getFormats()) { // gets a list of the format choice values. the "foo" and "bar" parts of {0,choice,0#foo|1#bar}
+            if (o != null) {
+              MessageFormat subFormat = new MessageFormat(o.toString());
+              count = Math.max(count, countFields(subFormat));
+            }
+          }
+        }
+      }
+      
+      return count;
+    }
 	}
 
 	private static class MethodImplementationAdapter extends MethodAdapter {
