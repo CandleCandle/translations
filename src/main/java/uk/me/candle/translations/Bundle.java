@@ -314,7 +314,9 @@ public class Bundle {
 		Properties props = new Properties(); // this is what will be returned.
 
 		InputStream defaultStream = clz.getClassLoader().getResourceAsStream(sb.toString() + ".properties");
-		props.load(defaultStream);
+		if (defaultStream != null) {
+			props.load(defaultStream);
+		}
 		Properties language = null;
 		if (!locale.getLanguage().isEmpty()) {
 			sb.append("_");
