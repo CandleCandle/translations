@@ -1,6 +1,5 @@
 package uk.me.candle.translations;
 
-import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.Properties;
@@ -298,31 +297,159 @@ public class BundleTest {
 		assertEquals("overloaded 5", b.overload(5));
 	}
 
-  @Test
-  public void testSubParameter() throws Exception {
+	@Test
+	public void testSubParameter() throws Exception {
 		Locale locale = Locale.ENGLISH;
 		Properties trns = TranslationBundle.getProperties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns);
-    assertEquals("name version", b.subPatternParameter("name", "version", 0, 0, null));
-		assertEquals("name version - profile", b.subPatternParameter("name", "version", 0, 1, "profile"));
-		assertEquals("name version flag", b.subPatternParameter("name", "version", 1, 0, null));
-		assertEquals("name version flag - profile", b.subPatternParameter("name", "version", 1, 1, "profile"));
-  }
-
-  @Test
-  public void testSubParameterFailBundle() throws Exception {
-    //{0} {1}{2,choice,1# portable}{3,choice,1< - {4}}
-		Locale locale = Locale.ENGLISH;
-		Properties trns = SubPatternBundle.getProperties();
-		SubPatternBundle b = Bundle.load(SubPatternBundle.class, locale, trns,
-            Bundle.LoadIgnoreMissing.NO,
-            Bundle.LoadIgnoreExtra.NO,
-            Bundle.LoadIgnoreParameterMisMatch.NO
-            );
 		assertEquals("name version", b.subPatternParameter("name", "version", 0, 0, null));
 		assertEquals("name version - profile", b.subPatternParameter("name", "version", 0, 1, "profile"));
 		assertEquals("name version flag", b.subPatternParameter("name", "version", 1, 0, null));
 		assertEquals("name version flag - profile", b.subPatternParameter("name", "version", 1, 1, "profile"));
-  }
+	}
+	@Test
+	public void testSubParameterFailBundle() throws Exception {
+		//{0} {1}{2,choice,1# portable}{3,choice,1< - {4}}
+		Locale locale = Locale.ENGLISH;
+		Properties trns = SubPatternBundle.getProperties();
+		SubPatternBundle b = Bundle.load(SubPatternBundle.class, locale, trns,
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO);
+		assertEquals("name version", b.subPatternParameter("name", "version", 0, 0, null));
+		assertEquals("name version - profile", b.subPatternParameter("name", "version", 0, 1, "profile"));
+		assertEquals("name version flag", b.subPatternParameter("name", "version", 1, 0, null));
+		assertEquals("name version flag - profile", b.subPatternParameter("name", "version", 1, 1, "profile"));
+	}
+
+	// tests to see if it is picking up the default language
+
+	Locale getLocale(String language, String country, String varient) {
+		Locale bestMatch = null;
+		for (Locale l : Locale.getAvailableLocales()) {
+			if (l.getLanguage().equals(language)) {
+				bestMatch = l;
+				if (l.getCountry().equals(country)) {
+					bestMatch = l;
+					if (l.getVariant().equals(varient)) {
+						return l;
+					}
+				}
+			}
+		}
+		return bestMatch;
+	}
+
+	@Test
+	public void testDefaultLanguageSimple1() throws Exception {
+		SimpleSmallBundle ssb = Bundle.load(SimpleSmallBundle.class, Locale.KOREAN); // no translations
+		assertEquals("simple", ssb.simple());
+	}
+	@Test
+	public void testDefaultLanguageSimple2() throws Exception {
+		SimpleSmallBundle ssb = Bundle.load(SimpleSmallBundle.class, Locale.KOREAN); // no translations
+		assertEquals("simple int 1.", ssb.simpleOne(1));
+	}
+	@Test
+	public void testDefaultLanguageSimple3() throws Exception {
+		SimpleSmallBundle ssb = Bundle.load(SimpleSmallBundle.class, getLocale("bg", "", ""));
+		assertEquals("bg simple int 1.", ssb.simpleOne(1));
+	}
+	@Test
+	public void testDefaultLanguageSimple4() throws Exception {
+		SimpleSmallBundle ssb = Bundle.load(SimpleSmallBundle.class, getLocale("de", "", ""));
+		assertEquals("de simple int 1.", ssb.simpleOne(1));
+	}
+
+	@Test
+	public void testDefaultLanguageDefaultOnly() throws Exception {
+		SimpleSmallBundle ssb = Bundle.load(SimpleSmallBundle.class, Locale.ENGLISH);
+		assertEquals("default only", ssb.defaultOnly());
+		SimpleSmallBundle ssbBG = Bundle.load(SimpleSmallBundle.class, getLocale("bg", "", ""));
+		assertEquals("default only", ssbBG.defaultOnly());
+		SimpleSmallBundle ssbJA = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "", ""));
+		assertEquals("default only", ssbJA.defaultOnly());
+		SimpleSmallBundle ssbJAJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "JP", ""));
+		assertEquals("default only", ssbJAJP.defaultOnly());
+		SimpleSmallBundle ssbJAJPJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "JP", "JP"));
+		assertEquals("default only", ssbJAJPJP.defaultOnly());
+		SimpleSmallBundle ssbDE = Bundle.load(SimpleSmallBundle.class, getLocale("de", "", ""));
+		assertEquals("de default only", ssbDE.defaultOnly());
+		SimpleSmallBundle ssbDEDE = Bundle.load(SimpleSmallBundle.class, getLocale("de", "DE", ""));
+		assertEquals("de_de default only", ssbDEDE.defaultOnly());
+	}
+	
+	@Test
+	public void testDefaultLanguageDefaultBg() throws Exception {
+		SimpleSmallBundle ssb = Bundle.load(SimpleSmallBundle.class, Locale.ENGLISH);
+		assertEquals("default and Bulgarian", ssb.defaultBg());
+		SimpleSmallBundle ssbBG = Bundle.load(SimpleSmallBundle.class, getLocale("bg", "", ""));
+		assertEquals("Bulgarian", ssbBG.defaultBg());
+		SimpleSmallBundle ssbJA = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "", ""));
+		assertEquals("default and Bulgarian", ssbJA.defaultBg());
+		SimpleSmallBundle ssbJAJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "jp", ""));
+		assertEquals("default and Bulgarian", ssbJAJP.defaultBg());
+		SimpleSmallBundle ssbJAJPJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "jp", "jp"));
+		assertEquals("default and Bulgarian", ssbJAJPJP.defaultBg());
+		SimpleSmallBundle ssbDE = Bundle.load(SimpleSmallBundle.class, getLocale("de", "", ""));
+		assertEquals("de default only", ssbDE.defaultBg());
+		SimpleSmallBundle ssbDEDE = Bundle.load(SimpleSmallBundle.class, getLocale("de", "DE", ""));
+		assertEquals("de_de default only", ssbDEDE.defaultBg());
+	}
+	
+	@Test
+	public void testDefaultLanguageDefaultBgJa() throws Exception {
+		SimpleSmallBundle ssb = Bundle.load(SimpleSmallBundle.class, Locale.ENGLISH);
+		assertEquals("default, Bulgarian and Japanese", ssb.defaultBgJa());
+		SimpleSmallBundle ssbBG = Bundle.load(SimpleSmallBundle.class, getLocale("bg", "", ""));
+		assertEquals("Bulgarian", ssbBG.defaultBgJa());
+		SimpleSmallBundle ssbJA = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "", ""));
+		assertEquals("Japanese", ssbJA.defaultBgJa());
+		SimpleSmallBundle ssbJAJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "jp", ""));
+		assertEquals("default, Bulgarian and Japanese", ssbJAJP.defaultBgJa());
+		SimpleSmallBundle ssbJAJPJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "jp", "jp"));
+		assertEquals("default, Bulgarian and Japanese", ssbJAJPJP.defaultBgJa());
+		SimpleSmallBundle ssbDE = Bundle.load(SimpleSmallBundle.class, getLocale("de", "", ""));
+		assertEquals("de default, Bulgarian and Japanese", ssbDE.defaultBgJa());
+		SimpleSmallBundle ssbDEDE = Bundle.load(SimpleSmallBundle.class, getLocale("de", "DE", ""));
+		assertEquals("de_de default, Bulgarian and Japanese", ssbDEDE.defaultBgJa());
+	}
+
+	@Test
+	public void testDefaultLanguageDefaultBgJaJp() throws Exception {
+		SimpleSmallBundle ssb = Bundle.load(SimpleSmallBundle.class, Locale.ENGLISH);
+		assertEquals("default, Bulgarian and japanese variant", ssb.defaultBgJaJp());
+		SimpleSmallBundle ssbBG = Bundle.load(SimpleSmallBundle.class, getLocale("bg", "", ""));
+		assertEquals("Bulgarian", ssbBG.defaultBgJaJp());
+		SimpleSmallBundle ssbJA = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "", ""));
+		assertEquals("Japanese", ssbJA.defaultBgJaJp());
+		SimpleSmallBundle ssbJAJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "jp", ""));
+		assertEquals("Japanese varient", ssbJAJP.defaultBgJaJp());
+		SimpleSmallBundle ssbJAJPJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "jp", "jp"));
+		assertEquals("default, Bulgarian and japanese variant", ssbJAJPJP.defaultBgJaJp());
+		SimpleSmallBundle ssbDE = Bundle.load(SimpleSmallBundle.class, getLocale("de", "", ""));
+		assertEquals("default, Bulgarian and japanese variant", ssbDE.defaultBgJaJp());
+		SimpleSmallBundle ssbDEDE = Bundle.load(SimpleSmallBundle.class, getLocale("de", "DE", ""));
+		assertEquals("de_de default, Bulgarian and japanese variant", ssbDEDE.defaultBgJaJp());
+	}
+
+	@Test
+	public void testDefaultLanguageDefaultBgJaJpJp() throws Exception {
+		SimpleSmallBundle ssb = Bundle.load(SimpleSmallBundle.class, Locale.ENGLISH);
+		assertEquals("default, Bulgarian and japanese sub-variant", ssb.defaultBgJaJpJp());
+		SimpleSmallBundle ssbBG = Bundle.load(SimpleSmallBundle.class, getLocale("bg", "", ""));
+		assertEquals("Bulgarian", ssbBG.defaultBgJaJpJp());
+		SimpleSmallBundle ssbJA = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "", ""));
+		assertEquals("Japanese", ssbJA.defaultBgJaJpJp());
+		SimpleSmallBundle ssbJAJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "jp", ""));
+		assertEquals("Japanese varient", ssbJAJP.defaultBgJaJpJp());
+		SimpleSmallBundle ssbJAJPJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "jp", "jp"));
+		assertEquals("Japanese sub-varient", ssbJAJPJP.defaultBgJaJpJp());
+		SimpleSmallBundle ssbDE = Bundle.load(SimpleSmallBundle.class, getLocale("de", "", ""));
+		assertEquals("default, Bulgarian and japanese sub-variant", ssbDE.defaultBgJaJpJp());
+		SimpleSmallBundle ssbDEDE = Bundle.load(SimpleSmallBundle.class, getLocale("de", "DE", ""));
+		assertEquals("default, Bulgarian and japanese sub-variant", ssbDEDE.defaultBgJaJpJp());
+	}
+
 }
 

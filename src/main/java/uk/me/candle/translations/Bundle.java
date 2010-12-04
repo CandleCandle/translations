@@ -133,6 +133,7 @@ public class Bundle {
 	public enum LoadIgnoreMissing { YES, NO };
 	public enum LoadIgnoreExtra { YES, NO };
 	public enum LoadIgnoreParameterMisMatch { YES, NO };
+	public enum AllowDefaultLanguage { YES, NO };
 
 	/**
 	 * The locale for this bundle. Required for formatting numbers in the subclasses.

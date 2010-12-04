@@ -62,5 +62,5 @@ public abstract class TranslationBundle extends Bundle {
 	public abstract String overload(String s);
 	public abstract String overload(double d);
 	public abstract String overload(int d);
-  public abstract String subPatternParameter(String programName, String programVersion, int portable, int profileCount, String activeProfileName);
+	public abstract String subPatternParameter(String programName, String programVersion, int portable, int profileCount, String activeProfileName);
 }
