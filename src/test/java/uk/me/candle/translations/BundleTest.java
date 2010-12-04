@@ -387,14 +387,14 @@ public class BundleTest {
 		assertEquals("Bulgarian", ssbBG.defaultBg());
 		SimpleSmallBundle ssbJA = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "", ""));
 		assertEquals("default and Bulgarian", ssbJA.defaultBg());
-		SimpleSmallBundle ssbJAJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "jp", ""));
+		SimpleSmallBundle ssbJAJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "JP", ""));
 		assertEquals("default and Bulgarian", ssbJAJP.defaultBg());
-		SimpleSmallBundle ssbJAJPJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "jp", "jp"));
+		SimpleSmallBundle ssbJAJPJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "JP", "JP"));
 		assertEquals("default and Bulgarian", ssbJAJPJP.defaultBg());
 		SimpleSmallBundle ssbDE = Bundle.load(SimpleSmallBundle.class, getLocale("de", "", ""));
-		assertEquals("de default only", ssbDE.defaultBg());
+		assertEquals("de default and Bulgarian", ssbDE.defaultBg());
 		SimpleSmallBundle ssbDEDE = Bundle.load(SimpleSmallBundle.class, getLocale("de", "DE", ""));
-		assertEquals("de_de default only", ssbDEDE.defaultBg());
+		assertEquals("de_de default and Bulgarian", ssbDEDE.defaultBg());
 	}
 	
 	@Test
@@ -405,10 +405,10 @@ public class BundleTest {
 		assertEquals("Bulgarian", ssbBG.defaultBgJa());
 		SimpleSmallBundle ssbJA = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "", ""));
 		assertEquals("Japanese", ssbJA.defaultBgJa());
-		SimpleSmallBundle ssbJAJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "jp", ""));
-		assertEquals("default, Bulgarian and Japanese", ssbJAJP.defaultBgJa());
-		SimpleSmallBundle ssbJAJPJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "jp", "jp"));
-		assertEquals("default, Bulgarian and Japanese", ssbJAJPJP.defaultBgJa());
+		SimpleSmallBundle ssbJAJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "JP", ""));
+		assertEquals("Japanese", ssbJAJP.defaultBgJa());
+		SimpleSmallBundle ssbJAJPJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "JP", "JP"));
+		assertEquals("Japanese", ssbJAJPJP.defaultBgJa());
 		SimpleSmallBundle ssbDE = Bundle.load(SimpleSmallBundle.class, getLocale("de", "", ""));
 		assertEquals("de default, Bulgarian and Japanese", ssbDE.defaultBgJa());
 		SimpleSmallBundle ssbDEDE = Bundle.load(SimpleSmallBundle.class, getLocale("de", "DE", ""));
@@ -423,10 +423,10 @@ public class BundleTest {
 		assertEquals("Bulgarian", ssbBG.defaultBgJaJp());
 		SimpleSmallBundle ssbJA = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "", ""));
 		assertEquals("Japanese", ssbJA.defaultBgJaJp());
-		SimpleSmallBundle ssbJAJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "jp", ""));
+		SimpleSmallBundle ssbJAJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "JP", ""));
 		assertEquals("Japanese varient", ssbJAJP.defaultBgJaJp());
-		SimpleSmallBundle ssbJAJPJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "jp", "jp"));
-		assertEquals("default, Bulgarian and japanese variant", ssbJAJPJP.defaultBgJaJp());
+		SimpleSmallBundle ssbJAJPJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "JP", "JP"));
+		assertEquals("Japanese varient", ssbJAJPJP.defaultBgJaJp());
 		SimpleSmallBundle ssbDE = Bundle.load(SimpleSmallBundle.class, getLocale("de", "", ""));
 		assertEquals("default, Bulgarian and japanese variant", ssbDE.defaultBgJaJp());
 		SimpleSmallBundle ssbDEDE = Bundle.load(SimpleSmallBundle.class, getLocale("de", "DE", ""));
@@ -441,9 +441,9 @@ public class BundleTest {
 		assertEquals("Bulgarian", ssbBG.defaultBgJaJpJp());
 		SimpleSmallBundle ssbJA = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "", ""));
 		assertEquals("Japanese", ssbJA.defaultBgJaJpJp());
-		SimpleSmallBundle ssbJAJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "jp", ""));
+		SimpleSmallBundle ssbJAJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "JP", ""));
 		assertEquals("Japanese varient", ssbJAJP.defaultBgJaJpJp());
-		SimpleSmallBundle ssbJAJPJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "jp", "jp"));
+		SimpleSmallBundle ssbJAJPJP = Bundle.load(SimpleSmallBundle.class, getLocale("ja", "JP", "JP"));
 		assertEquals("Japanese sub-varient", ssbJAJPJP.defaultBgJaJpJp());
 		SimpleSmallBundle ssbDE = Bundle.load(SimpleSmallBundle.class, getLocale("de", "", ""));
 		assertEquals("default, Bulgarian and japanese sub-variant", ssbDE.defaultBgJaJpJp());

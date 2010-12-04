@@ -146,6 +146,7 @@ public class Bundle {
 	public static LoadIgnoreMissing LOAD_IGNORE_MISSING = LoadIgnoreMissing.YES;
 	public static LoadIgnoreExtra LOAD_IGNORE_EXTRA = LoadIgnoreExtra.YES;
 	public static LoadIgnoreParameterMisMatch LOAD_IGNORE_PARAM_MISMATCH = LoadIgnoreParameterMisMatch.YES;
+	public static AllowDefaultLanguage LOAD_IGNORE_ALLOW_DEFAULT = AllowDefaultLanguage.YES;
 
 	public Locale getLocale() {
 		return locale;
@@ -176,20 +177,9 @@ public class Bundle {
 			, NoSuchMethodException, IOException
 			, IllegalArgumentException, InvocationTargetException
 			{
-		final Properties translations = new Properties();
-		final String resourcePath =
-				cls.getPackage().getName().replace(".", "/")
-				+ "/"
-				+ cls.getSimpleName()
-				+ "_"
-				+ locale.getLanguage()
-				+ ".properties";
-		InputStream translationsIn = cls.getClassLoader().getResourceAsStream(resourcePath);
-		if (translationsIn == null) {
-			throw new MissingResourceException("There was no resource for the path: " + resourcePath, cls.getName(), "");
-		}
- 		translations.load(translationsIn);
-		return load(cls, locale, translations, configuration);
+		return load(cls, locale,
+				getBundleProperties(cls, locale, configuration)
+				, configuration);
 	}
 
 	/**
@@ -280,6 +270,87 @@ public class Bundle {
 
 		Constructor c = result.getConstructor(new Class[]{Locale.class});
 		return (T) c.newInstance(locale);
+	}
+
+
+	private static <T extends Bundle> Properties getBundleProperties(Class<T> clz, Locale locale, BundleConfiguration configuration) throws IOException, MissingResourceException {
+		if (configuration.getAllowDefaultLanguage() == AllowDefaultLanguage.YES) {
+			return getBundlePropertiesWithDefaults(clz, locale);
+		} else {
+			return getBundlePropertiesExact(clz, locale);
+		}
+	}
+	private static <T extends Bundle> Properties getBundlePropertiesExact(Class<T> clz, Locale locale) throws IOException, MissingResourceException {
+		StringBuilder sb = new StringBuilder();
+		sb.append(clz.getPackage().getName().replace(".", "/"));
+		sb.append(clz.getSimpleName());
+		if (!locale.getLanguage().isEmpty()) {
+			sb.append("_");
+			sb.append(locale.getLanguage().toLowerCase());
+			if (!locale.getCountry().isEmpty()) {
+				sb.append("_");
+				sb.append(locale.getCountry().toLowerCase());
+				if (!locale.getVariant().isEmpty()) {
+					sb.append("_");
+					sb.append(locale.getVariant().toLowerCase());
+				}
+			}
+		}
+		InputStream main = clz.getClassLoader().getResourceAsStream(sb.toString() + ".properties");
+		if (main == null) {
+			throw new MissingResourceException("There was no resource for the path: " + sb.toString(), clz.getName(), "");
+		}
+		Properties props = new Properties();
+		props.load(main);
+		return props;
+	}
+
+	private static <T extends Bundle> Properties getBundlePropertiesWithDefaults(Class<T> clz, Locale locale) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		sb.append(clz.getPackage().getName().replace(".", "/"));
+		sb.append("/");
+		sb.append(clz.getSimpleName());
+
+		Properties props = new Properties(); // this is what will be returned.
+
+		InputStream defaultStream = clz.getClassLoader().getResourceAsStream(sb.toString() + ".properties");
+		props.load(defaultStream);
+		Properties language = null;
+		if (!locale.getLanguage().isEmpty()) {
+			sb.append("_");
+			sb.append(locale.getLanguage());
+			InputStream main = clz.getClassLoader().getResourceAsStream(sb.toString() + ".properties");
+			if (main != null) {
+				language = new Properties(props);
+				language.load(main);
+				props = language;
+			}
+		}
+		Properties country = null;
+		if (!locale.getCountry().isEmpty()) {
+			sb.append("_");
+			sb.append(locale.getCountry());
+			InputStream main = clz.getClassLoader().getResourceAsStream(sb.toString() + ".properties");
+			if (main != null) {
+				props.putAll(language);
+				country = new Properties(props);
+				country.load(main);
+				props = country;
+			}
+		}
+		Properties varient = null;
+		if (!locale.getVariant().isEmpty()) {
+			sb.append("_");
+			sb.append(locale.getVariant());
+			InputStream main = clz.getClassLoader().getResourceAsStream(sb.toString() + ".properties");
+			if (main != null) {
+				props.putAll(country);
+				varient = new Properties(props);
+				varient.load(main);
+				props = varient;
+			}
+		}
+		return props;
 	}
 
 	private static class ImplementMethodsAdapter extends ClassAdapter {
@@ -531,11 +602,20 @@ public class Bundle {
 		private final LoadIgnoreMissing ignoreMissing;
 		private final LoadIgnoreExtra ignoreExtra;
 		private final LoadIgnoreParameterMisMatch ignoreParamMismatch;
+		private final AllowDefaultLanguage allowDefaultLanguage;
 
 		public BundleConfiguration(LoadIgnoreMissing ignoreMissing, LoadIgnoreExtra ignoreExtra, LoadIgnoreParameterMisMatch ignoreParamMismatch) {
 			this.ignoreMissing = ignoreMissing;
 			this.ignoreExtra = ignoreExtra;
 			this.ignoreParamMismatch = ignoreParamMismatch;
+			this.allowDefaultLanguage = AllowDefaultLanguage.YES;
+		}
+
+		public BundleConfiguration(LoadIgnoreMissing ignoreMissing, LoadIgnoreExtra ignoreExtra, LoadIgnoreParameterMisMatch ignoreParamMismatch, AllowDefaultLanguage allowDefaultLanguage) {
+			this.ignoreMissing = ignoreMissing;
+			this.ignoreExtra = ignoreExtra;
+			this.ignoreParamMismatch = ignoreParamMismatch;
+			this.allowDefaultLanguage = allowDefaultLanguage;
 		}
 
 		/**
@@ -560,6 +640,14 @@ public class Bundle {
 		 */
 		public LoadIgnoreParameterMisMatch getIgnoreParamMismatch() {
 			return ignoreParamMismatch;
+		}
+		
+		/**
+		 * If this is 'NO' then there has to be an exact properties bundle match for the language
+		 * @return
+		 */
+		public AllowDefaultLanguage getAllowDefaultLanguage() {
+			return allowDefaultLanguage;
 		}
 	}
 
