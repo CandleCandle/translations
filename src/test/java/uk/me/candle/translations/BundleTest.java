@@ -451,5 +451,88 @@ public class BundleTest {
 		assertEquals("default, Bulgarian and japanese sub-variant", ssbDEDE.defaultBgJaJpJp());
 	}
 
+	@Test(expected=MissingResourceException.class)
+	public void testFailToLoadWithoutDefaultsNoBundle() throws Exception {
+		SimpleSmallBundle ssb = Bundle.load(SimpleSmallBundle.class,
+				Locale.FRENCH,
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO,
+				Bundle.AllowDefaultLanguage.NO
+				);
+		System.out.println(ssb.defaultBg());
+	}
+
+	@Test(expected=MissingResourceException.class)
+	public void testFailToLoadWithoutDefaultsPartialBundleBg() throws Exception {
+		SimpleSmallBundle ssb = Bundle.load(SimpleSmallBundle.class,
+				getLocale("bg", "", ""),
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO,
+				Bundle.AllowDefaultLanguage.NO
+				);
+		System.out.println(ssb.defaultBg());
+	}
+
+	@Test(expected=MissingResourceException.class)
+	public void testFailToLoadWithoutDefaultsPartialBundleJa() throws Exception {
+		SimpleSmallBundle ssb = Bundle.load(SimpleSmallBundle.class,
+				getLocale("ja", "", ""),
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO,
+				Bundle.AllowDefaultLanguage.NO
+				);
+		System.out.println(ssb.defaultBg());
+	}
+
+	@Test(expected=MissingResourceException.class)
+	public void testFailToLoadWithoutDefaultsPartialBundleJaJp() throws Exception {
+		SimpleSmallBundle ssb = Bundle.load(SimpleSmallBundle.class,
+				getLocale("ja", "JP", ""),
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO,
+				Bundle.AllowDefaultLanguage.NO
+				);
+		System.out.println(ssb.defaultBg());
+	}
+
+	@Test(expected=MissingResourceException.class)
+	public void testFailToLoadWithoutDefaultsPartialBundleJaJpJp() throws Exception {
+		SimpleSmallBundle ssb = Bundle.load(SimpleSmallBundle.class,
+				getLocale("ja", "JP", "JP"),
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO,
+				Bundle.AllowDefaultLanguage.NO
+				);
+		System.out.println(ssb.defaultBg());
+	}
+
+	@Test(expected=MissingResourceException.class)
+	public void testFailToLoadWithoutDefaultsPartialBundleDe() throws Exception {
+		SimpleSmallBundle ssb = Bundle.load(SimpleSmallBundle.class,
+				getLocale("de", "", ""),
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO,
+				Bundle.AllowDefaultLanguage.NO
+				);
+		System.out.println(ssb.defaultBg());
+	}
+
+	@Test(expected=MissingResourceException.class)
+	public void testFailToLoadWithoutDefaultsPartialBundleDeDe() throws Exception {
+		SimpleSmallBundle ssb = Bundle.load(SimpleSmallBundle.class,
+				getLocale("de", "DE", ""),
+				Bundle.LoadIgnoreMissing.NO,
+				Bundle.LoadIgnoreExtra.NO,
+				Bundle.LoadIgnoreParameterMisMatch.NO,
+				Bundle.AllowDefaultLanguage.NO
+				);
+		System.out.println(ssb.defaultBg());
+	}
 }
 

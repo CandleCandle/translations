@@ -106,7 +106,8 @@ import org.objectweb.asm.Type;
  *		Foo foo = Bundle.load(Foo.class, Locale.ENGLISH,
  *				LoadIgnoreMissing.NO,
  *				LoadIgnoreExtra.NO,
- *				LoadIgnoreParameterMisMatch.NO);
+ *				LoadIgnoreParameterMisMatch.NO,
+ *				AllowDefaultLanguage.NO);
  *		assertNotNull(foo.bar());
  *	}
  * }</pre>
@@ -146,7 +147,7 @@ public class Bundle {
 	public static LoadIgnoreMissing LOAD_IGNORE_MISSING = LoadIgnoreMissing.YES;
 	public static LoadIgnoreExtra LOAD_IGNORE_EXTRA = LoadIgnoreExtra.YES;
 	public static LoadIgnoreParameterMisMatch LOAD_IGNORE_PARAM_MISMATCH = LoadIgnoreParameterMisMatch.YES;
-	public static AllowDefaultLanguage LOAD_IGNORE_ALLOW_DEFAULT = AllowDefaultLanguage.YES;
+	public static AllowDefaultLanguage LOAD_ALLOW_DEFAULT = AllowDefaultLanguage.YES;
 
 	public Locale getLocale() {
 		return locale;
@@ -170,7 +171,7 @@ public class Bundle {
 			, NoSuchMethodException, IOException
 			, IllegalArgumentException, InvocationTargetException
 			{
-		return load(cls, locale, LOAD_IGNORE_MISSING, LOAD_IGNORE_EXTRA, LOAD_IGNORE_PARAM_MISMATCH);
+		return load(cls, locale, LOAD_IGNORE_MISSING, LOAD_IGNORE_EXTRA, LOAD_IGNORE_PARAM_MISMATCH, LOAD_ALLOW_DEFAULT);
 	}
 	static <T extends Bundle> T load(Class<T> cls, Locale locale, BundleConfiguration configuration)
 			throws IllegalAccessException, InstantiationException
@@ -191,7 +192,7 @@ public class Bundle {
 			, NoSuchMethodException, IOException
 			, IllegalArgumentException, InvocationTargetException
 			{
-		return load(cls, locale, translations, new BundleConfiguration(LOAD_IGNORE_MISSING, LOAD_IGNORE_EXTRA, LOAD_IGNORE_PARAM_MISMATCH));
+		return load(cls, locale, translations, new BundleConfiguration(LOAD_IGNORE_MISSING, LOAD_IGNORE_EXTRA, LOAD_IGNORE_PARAM_MISMATCH, LOAD_ALLOW_DEFAULT));
 	}
 
 	/**
@@ -204,6 +205,19 @@ public class Bundle {
 			, IllegalArgumentException, InvocationTargetException
 			{
 		return load(cls, locale, new BundleConfiguration(ignoreMissing, ignoreExtra, ignoreParamMismatch));
+
+	}
+
+	/**
+	 * Constructs a bundle implementation for the class and locale with the specified options.
+	 * @see #load(java.lang.Class, java.util.Locale, java.util.Properties, uk.me.candle.translations.Bundle.LoadIgnoreMissing, uk.me.candle.translations.Bundle.LoadIgnoreExtra, uk.me.candle.translations.Bundle.LoadIgnoreParameterMisMatch)
+	 */
+	public static <T extends Bundle> T load(Class<T> cls, Locale locale, LoadIgnoreMissing ignoreMissing, LoadIgnoreExtra ignoreExtra, LoadIgnoreParameterMisMatch ignoreParamMismatch, AllowDefaultLanguage allowDefaultLanguage)
+			throws IllegalAccessException, InstantiationException
+			, NoSuchMethodException, IOException
+			, IllegalArgumentException, InvocationTargetException
+			{
+		return load(cls, locale, new BundleConfiguration(ignoreMissing, ignoreExtra, ignoreParamMismatch, allowDefaultLanguage));
 
 	}
 
@@ -235,6 +249,14 @@ public class Bundle {
 			, IllegalArgumentException, InvocationTargetException
 			{
 		return load(cls, locale, translations, new BundleConfiguration(ignoreMissing, ignoreExtra, ignoreParamMismatch));
+	}
+
+	static <T extends Bundle> T load(Class<T> cls, Locale locale, Properties translations, LoadIgnoreMissing ignoreMissing, LoadIgnoreExtra ignoreExtra, LoadIgnoreParameterMisMatch ignoreParamMismatch, AllowDefaultLanguage allowDefaultLanguage)
+			throws IllegalAccessException, InstantiationException
+			, NoSuchMethodException, IOException
+			, IllegalArgumentException, InvocationTargetException
+			{
+		return load(cls, locale, translations, new BundleConfiguration(ignoreMissing, ignoreExtra, ignoreParamMismatch, allowDefaultLanguage));
 	}
 
 	private static <T extends Bundle> T load(Class<T> cls, Locale locale, Properties translations, BundleConfiguration configuration)
