@@ -305,6 +305,7 @@ public class Bundle {
 	private static <T extends Bundle> Properties getBundlePropertiesExact(Class<T> clz, Locale locale) throws IOException, MissingResourceException {
 		StringBuilder sb = new StringBuilder();
 		sb.append(clz.getPackage().getName().replace(".", "/"));
+		sb.append("/");
 		sb.append(clz.getSimpleName());
 		if (!locale.getLanguage().isEmpty()) {
 			sb.append("_");
@@ -318,6 +319,9 @@ public class Bundle {
 				}
 			}
 		}
+		// this uses the classloader from the bundle class so it should avoid spurious
+		// classloader issues. The properties should, therefrore, be available from the
+		// classloader as the bundle class.
 		InputStream main = clz.getClassLoader().getResourceAsStream(sb.toString() + ".properties");
 		if (main == null) {
 			throw new MissingResourceException("There was no resource for the path: " + sb.toString(), clz.getName(), "");
