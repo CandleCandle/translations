@@ -20,6 +20,8 @@ import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles translations.
@@ -131,6 +133,8 @@ import org.objectweb.asm.Type;
  * @author Andrew Wheat
  */
 public class Bundle {
+  private static final Logger LOG = LoggerFactory.getLogger(Bundle.class);
+  
 	public enum LoadIgnoreMissing { YES, NO };
 	public enum LoadIgnoreExtra { YES, NO };
 	public enum LoadIgnoreParameterMisMatch { YES, NO };
@@ -330,55 +334,54 @@ public class Bundle {
 		props.load(main);
 		return props;
 	}
+  
+  /**
+   * Loads the property file if it exists into the property values, 
+   * @param <T> bundle type
+   * @param from existing properties, these act as defaults.
+   * @param clz class that is being used as the translations template.
+   * @param propertiesReference the start of the properties resource (missing the '.properties')
+   * @return the properties file that should be used as translations.
+   * @throws IOException 
+   */
+  private static <T extends Bundle> Properties appendValuesFrom(
+          Properties from,
+          Class<T> clz,
+          String propertiesReference
+          ) throws IOException {        
+    LOG.debug("Attempting to add properties from: {}.properties", propertiesReference);
+    Properties ret = new Properties();
+    ret.putAll(from);
+    InputStream in = clz.getClassLoader().getResourceAsStream(propertiesReference + ".properties");
+    if (in != null) {
+      LOG.debug("    Found.");
+      Properties newProps = new Properties();
+      newProps.load(in);
+      ret.putAll(newProps);
+    } else {
+      LOG.debug("    Properties file not found.");
+    }
+    return ret;
+  }
 
 	private static <T extends Bundle> Properties getBundlePropertiesWithDefaults(Class<T> clz, Locale locale) throws IOException {
-		StringBuilder sb = new StringBuilder();
+		LOG.debug("Fetching bundle [default allowed] for {} , {}", clz, locale);
+    StringBuilder sb = new StringBuilder();
 		sb.append(clz.getPackage().getName().replace(".", "/"));
 		sb.append("/");
 		sb.append(clz.getSimpleName());
 
-		Properties props = new Properties(); // this is what will be returned.
-
-		InputStream defaultStream = clz.getClassLoader().getResourceAsStream(sb.toString() + ".properties");
-		if (defaultStream != null) {
-			props.load(defaultStream);
-		}
-		Properties language = null;
-		if (!locale.getLanguage().isEmpty()) {
-			sb.append("_");
-			sb.append(locale.getLanguage());
-			InputStream main = clz.getClassLoader().getResourceAsStream(sb.toString() + ".properties");
-			if (main != null) {
-				language = new Properties(props);
-				language.load(main);
-				props = language;
-			}
-		}
-		Properties country = null;
-		if (!locale.getCountry().isEmpty()) {
-			sb.append("_");
-			sb.append(locale.getCountry());
-			InputStream main = clz.getClassLoader().getResourceAsStream(sb.toString() + ".properties");
-			if (main != null) {
-				props.putAll(language);
-				country = new Properties(props);
-				country.load(main);
-				props = country;
-			}
-		}
-		Properties varient = null;
-		if (!locale.getVariant().isEmpty()) {
-			sb.append("_");
-			sb.append(locale.getVariant());
-			InputStream main = clz.getClassLoader().getResourceAsStream(sb.toString() + ".properties");
-			if (main != null) {
-				props.putAll(country);
-				varient = new Properties(props);
-				varient.load(main);
-				props = varient;
-			}
-		}
-		return props;
+		Properties p = new Properties(); // this is what will be returned.
+    p = appendValuesFrom(p, clz, sb.toString());
+    sb.append("_");
+    sb.append(locale.getLanguage().toLowerCase(Locale.ENGLISH));
+    p = appendValuesFrom(p, clz, sb.toString());
+    sb.append("_");
+    sb.append(locale.getCountry().toLowerCase(Locale.ENGLISH));
+    p = appendValuesFrom(p, clz, sb.toString());
+    sb.append("_");
+    sb.append(locale.getVariant().toLowerCase(Locale.ENGLISH));
+    return appendValuesFrom(p, clz, sb.toString());
 	}
 
 	private static class ImplementMethodsAdapter extends ClassAdapter {
@@ -424,6 +427,7 @@ public class Bundle {
 				String translation = translations.getProperty(name);
 				// If we are ignoring the
 				if (translation == null) {
+          LOG.debug("Missing property for: {} ", name);
 					if (configuration.getIgnoreMissing().equals(LoadIgnoreMissing.NO)) {
 						throw new MissingResourceException("The translation file for " + baseName + " in the language: " + locale + " is missing a key: " + name, baseName, name);
 					}
