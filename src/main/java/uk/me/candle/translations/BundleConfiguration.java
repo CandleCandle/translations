@@ -48,4 +48,24 @@ class BundleConfiguration {
 	 */ public Bundle.AllowDefaultLanguage getAllowDefaultLanguage() {
 		return allowDefaultLanguage;
 	}
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		final BundleConfiguration other = (BundleConfiguration) obj;
+		if (this.ignoreMissing != other.ignoreMissing) return false;
+		if (this.ignoreExtra != other.ignoreExtra) return false;
+		if (this.ignoreParamMismatch != other.ignoreParamMismatch) return false;
+		if (this.allowDefaultLanguage != other.allowDefaultLanguage) return false;
+		return true;
+	}
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 97 * hash + (this.ignoreMissing != null ? this.ignoreMissing.hashCode() : 0);
+		hash = 97 * hash + (this.ignoreExtra != null ? this.ignoreExtra.hashCode() : 0);
+		hash = 97 * hash + (this.ignoreParamMismatch != null ? this.ignoreParamMismatch.hashCode() : 0);
+		hash = 97 * hash + (this.allowDefaultLanguage != null ? this.allowDefaultLanguage.hashCode() : 0);
+		return hash;
+	}
 }
