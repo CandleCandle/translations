@@ -545,15 +545,7 @@ public class Bundle {
 
 		private void boxIfNeededAndAddToArray(Type t, int idx, int reg) {
 			mv.visitInsn(Opcodes.DUP);
-			switch(idx) {
-				case 0: mv.visitInsn(Opcodes.ICONST_0); break;
-				case 1: mv.visitInsn(Opcodes.ICONST_1); break;
-				case 2: mv.visitInsn(Opcodes.ICONST_2); break;
-				case 3: mv.visitInsn(Opcodes.ICONST_3); break;
-				case 4: mv.visitInsn(Opcodes.ICONST_4); break;
-				case 5: mv.visitInsn(Opcodes.ICONST_5); break;
-				default: mv.visitIntInsn(Opcodes.BIPUSH, idx); break;
-			}
+			mv.visitLdcInsn(idx);
 			switch (t.getSort()) {
 				case Type.BOOLEAN:
 				case Type.BYTE:
