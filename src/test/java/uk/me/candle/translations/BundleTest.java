@@ -534,5 +534,16 @@ public class BundleTest {
 				);
 		System.out.println(ssb.defaultBg());
 	}
+
+	@Test
+	public void checkClassLoader() throws Exception {
+		SimpleSmallBundle ssb1 = Bundle.load(SimpleSmallBundle.class, getLocale("en", "", ""));
+		ClassLoader cl1 = ssb1.getClass().getClassLoader();
+		assertNotNull(cl1);
+		SimpleSmallBundle ssb2 = Bundle.load(SimpleSmallBundle.class, getLocale("en", "", ""));
+		ClassLoader cl2 = ssb2.getClass().getClassLoader();
+		assertNotNull(cl2);
+		assertEquals(ssb1.getClass(), ssb2.getClass());
+	}
 }
 
