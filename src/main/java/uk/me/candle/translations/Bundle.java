@@ -125,7 +125,8 @@ import org.slf4j.LoggerFactory;
  * @author Andrew Wheat
  */
 public class Bundle {
-  private static final Logger LOG = LoggerFactory.getLogger(Bundle.class);
+	private static final Logger LOG = LoggerFactory.getLogger(Bundle.class);
+	private static final BundleClassLoader BUNDLE_CLASS_LOADER = new BundleClassLoader();
   
 	public enum LoadIgnoreMissing { YES, NO };
 	public enum LoadIgnoreExtra { YES, NO };
@@ -283,8 +284,7 @@ public class Bundle {
 			}
 		}
 
-		BundleClassLoader bcl = new BundleClassLoader();
-		Class<?> result = bcl.defineClass(ca.getNewName().replace("/", "."), b2);
+		Class<?> result = BUNDLE_CLASS_LOADER.defineClass(ca.getNewName().replace("/", "."), b2);
 
 		Constructor c = result.getConstructor(new Class[]{Locale.class});
 		return (T) c.newInstance(locale);
@@ -372,15 +372,6 @@ public class Bundle {
 		sb.append("_");
 		sb.append(locale.getVariant().toLowerCase(Locale.ENGLISH));
 		return appendValuesFrom(p, clz, sb.toString());
-	}
-
-	/**
-	 * Allows class definition from a byte array.
-	 */
-	private static class BundleClassLoader extends ClassLoader {
-		public Class<?> defineClass(String name, byte[] b) {
-			return defineClass(name, b, 0, b.length);
-		}
 	}
 
 	/**
