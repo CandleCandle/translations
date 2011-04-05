@@ -30,12 +30,9 @@ class ImplementMethodsAdapter extends ClassAdapter {
 		this.configuration = configuration;
 		this.locale = locale;
 	}
-	String getNewName() {
-		return newName;
-	}
 	@Override
 	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-		newName = name + "__" + locale.getLanguage() + "__Impl";
+		newName = Bundle.getClassNameFor(name, locale);
 		baseName = name;
 		cv.visit(Opcodes.V1_6, access - Opcodes.ACC_ABSTRACT, newName, signature, name, interfaces);
 	}

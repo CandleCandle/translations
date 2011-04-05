@@ -126,7 +126,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Bundle {
 	private static final Logger LOG = LoggerFactory.getLogger(Bundle.class);
-	private static final BundleClassLoader BUNDLE_CLASS_LOADER = new BundleClassLoader();
+	private static BundleClassLoader BUNDLE_CLASS_LOADER = new BundleClassLoader();
   
 	public enum LoadIgnoreMissing { YES, NO };
 	public enum LoadIgnoreExtra { YES, NO };
@@ -256,17 +256,40 @@ public class Bundle {
 		return load(cls, locale, translations, new BundleConfiguration(ignoreMissing, ignoreExtra, ignoreParamMismatch, allowDefaultLanguage));
 	}
 
+	static <T extends Bundle> String getClassNameFor(Class<T> clz, Locale locale) {
+		// if the method is being called from here then the returned value's packages will be '.' separated
+		return getClassNameFor(clz.getName(), locale);
+	}
+	static <T extends Bundle> String getClassNameFor(String name, Locale locale) {
+		// if the method is being called from here then the returned value's packages will be '/' separated
+		StringBuilder sb = new StringBuilder(name);
+		sb.append("__");
+		sb.append(locale.getLanguage().toLowerCase(Locale.ENGLISH));
+		if (!locale.getCountry().isEmpty()) {
+			sb.append("__");
+			sb.append(locale.getCountry().toLowerCase(Locale.ENGLISH));
+			if (!locale.getVariant().isEmpty()) {
+				sb.append("__");
+				sb.append(locale.getLanguage().toLowerCase(Locale.ENGLISH));
+			}
+		}
+		sb.append("__Impl");
+		return sb.toString();
+	}
+
 	private static <T extends Bundle> T load(Class<T> cls, Locale locale, Properties translations, BundleConfiguration configuration)
 			throws IllegalAccessException, InstantiationException
 			, NoSuchMethodException, IOException
 			, IllegalArgumentException, InvocationTargetException
 			{
 		final Set<String> usedKeys = new HashSet<String>();
+		String newName = getClassNameFor(cls, locale);
 
 		ClassReader cr = new ClassReader(cls.getName());
 		ClassWriter cw = new ClassWriter(cr, ClassWriter.COMPUTE_FRAMES);
 		ImplementMethodsAdapter ca = new ImplementMethodsAdapter(cw, translations, usedKeys, locale, configuration);
 		cr.accept(ca, 0);
+
 		byte[] b2 = cw.toByteArray();
 
 		if (!configuration.getIgnoreExtra().equals(LoadIgnoreExtra.YES)) {
@@ -284,7 +307,7 @@ public class Bundle {
 			}
 		}
 
-		Class<?> result = BUNDLE_CLASS_LOADER.defineClass(ca.getNewName().replace("/", "."), b2);
+		Class<?> result = BUNDLE_CLASS_LOADER.defineClass(newName, b2);
 
 		Constructor c = result.getConstructor(new Class[]{Locale.class});
 		return (T) c.newInstance(locale);
@@ -305,13 +328,13 @@ public class Bundle {
 		sb.append(clz.getSimpleName());
 		if (!locale.getLanguage().isEmpty()) {
 			sb.append("_");
-			sb.append(locale.getLanguage().toLowerCase());
+			sb.append(locale.getLanguage().toLowerCase(Locale.ENGLISH));
 			if (!locale.getCountry().isEmpty()) {
 				sb.append("_");
-				sb.append(locale.getCountry().toLowerCase());
+				sb.append(locale.getCountry().toLowerCase(Locale.ENGLISH));
 				if (!locale.getVariant().isEmpty()) {
 					sb.append("_");
-					sb.append(locale.getVariant().toLowerCase());
+					sb.append(locale.getVariant().toLowerCase(Locale.ENGLISH));
 				}
 			}
 		}
