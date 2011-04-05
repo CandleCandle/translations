@@ -277,6 +277,7 @@ public class Bundle {
 		return sb.toString();
 	}
 
+	@SuppressWarnings("unchecked") // the return statement. it's safe.
 	private static <T extends Bundle> T load(Class<T> cls, Locale locale, Properties translations, BundleConfiguration configuration)
 			throws IllegalAccessException, InstantiationException
 			, NoSuchMethodException, IOException
@@ -309,16 +310,15 @@ public class Bundle {
 
 		Class<?> result = BUNDLE_CLASS_LOADER.defineClass(newName, b2);
 
-		return getInstance(result, locale);
+		return getInstance((Class<T>)result, locale);
 	}
 
-	private static <T extends Bundle> T getInstance(Class<?> clz, Locale locale)
+	private static <T extends Bundle> T getInstance(Class<T> clz, Locale locale)
 			throws IllegalAccessException, InstantiationException
 			, NoSuchMethodException, IOException
 			, IllegalArgumentException, InvocationTargetException
 			{
-		@SuppressWarnings("unchecked") // this is safe.
-		Constructor<T> c = ((Class<T>)clz).getConstructor(new Class<?>[]{Locale.class});
+		Constructor<T> c = clz.getConstructor(new Class<?>[]{Locale.class});
 		return c.newInstance(locale);
 	}
 
