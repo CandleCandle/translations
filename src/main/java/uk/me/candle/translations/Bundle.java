@@ -309,10 +309,18 @@ public class Bundle {
 
 		Class<?> result = BUNDLE_CLASS_LOADER.defineClass(newName, b2);
 
-		Constructor c = result.getConstructor(new Class[]{Locale.class});
-		return (T) c.newInstance(locale);
+		return getInstance(result, locale);
 	}
 
+	private static <T extends Bundle> T getInstance(Class<?> clz, Locale locale)
+			throws IllegalAccessException, InstantiationException
+			, NoSuchMethodException, IOException
+			, IllegalArgumentException, InvocationTargetException
+			{
+		@SuppressWarnings("unchecked") // this is safe.
+		Constructor<T> c = ((Class<T>)clz).getConstructor(new Class<?>[]{Locale.class});
+		return c.newInstance(locale);
+	}
 
 	private static <T extends Bundle> Properties getBundleProperties(Class<T> clz, Locale locale, BundleConfiguration configuration) throws IOException, MissingResourceException {
 		if (configuration.getAllowDefaultLanguage() == AllowDefaultLanguage.YES) {
