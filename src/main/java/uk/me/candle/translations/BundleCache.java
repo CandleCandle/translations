@@ -17,12 +17,13 @@ import java.util.Map;
  */
 public class BundleCache {
 
-	private static final ThreadLocal<Locale> tlsLocale = new InheritableThreadLocal<Locale>();
+	private static final ThreadLocal<Locale> tlsLocale = new InheritableThreadLocal<Locale>() {
+		@Override protected Locale initialValue() {
+			return Locale.getDefault();
+		}
+	};
 
 	public static Locale getThreadLocale() {
-		if (tlsLocale.get() == null) {
-			setThreadLocale(Locale.getDefault());
-		}
 		return tlsLocale.get();
 	}
 

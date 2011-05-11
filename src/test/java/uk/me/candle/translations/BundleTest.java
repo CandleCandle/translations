@@ -1,9 +1,13 @@
 package uk.me.candle.translations;
 
+import java.lang.reflect.Field;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.Properties;
+import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import static org.junit.Assert.*;
 
 /**
@@ -11,6 +15,24 @@ import static org.junit.Assert.*;
  * @author Andrew Wheat
  */
 public class BundleTest {
+	private static final Logger LOG = LoggerFactory.getLogger(BundleTest.class);
+
+	@Before
+	public void setup() {
+		try {
+			Field f = Bundle.class.getDeclaredField("BUNDLE_CLASS_LOADER");
+			f.setAccessible(true);
+			f.set(null, new BundleClassLoader());
+		} catch (IllegalArgumentException ex) {
+			LOG.error(ex.getMessage(), ex);
+		} catch (IllegalAccessException ex) {
+			LOG.error(ex.getMessage(), ex);
+		} catch (NoSuchFieldException ex) {
+			LOG.error(ex.getMessage(), ex);
+		} catch (SecurityException ex) {
+			LOG.error(ex.getMessage(), ex);
+		}
+	}
 
 	@Test
 	public void testNoParamsEn() throws Exception {
@@ -533,6 +555,17 @@ public class BundleTest {
 				Bundle.AllowDefaultLanguage.NO
 				);
 		System.out.println(ssb.defaultBg());
+	}
+
+	@Test
+	public void checkClassLoader() throws Exception {
+		SimpleSmallBundle ssb1 = Bundle.load(SimpleSmallBundle.class, getLocale("en", "", ""));
+		ClassLoader cl1 = ssb1.getClass().getClassLoader();
+		assertNotNull(cl1);
+		SimpleSmallBundle ssb2 = Bundle.load(SimpleSmallBundle.class, getLocale("en", "", ""));
+		ClassLoader cl2 = ssb2.getClass().getClassLoader();
+		assertNotNull(cl2);
+		assertEquals(ssb1.getClass(), ssb2.getClass());
 	}
 }
 
