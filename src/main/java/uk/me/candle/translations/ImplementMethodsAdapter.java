@@ -23,7 +23,9 @@ class ImplementMethodsAdapter extends ClassAdapter {
 	private Set<String> usedKeys;
 	private BundleConfiguration configuration;
 	private Locale locale;
-	ImplementMethodsAdapter(ClassVisitor cv, Properties translations, Set<String> usedKeys, Locale locale, BundleConfiguration configuration) {
+	ImplementMethodsAdapter(ClassVisitor cv, Properties translations,
+			Set<String> usedKeys, Locale locale,
+			BundleConfiguration configuration) {
 		super(cv);
 		this.translations = translations;
 		this.usedKeys = usedKeys;
@@ -44,12 +46,12 @@ class ImplementMethodsAdapter extends ClassAdapter {
 			// If we are ignoring the
 			if (translation == null) {
 				LOG.debug("Missing property for: {} ", name);
-				if (configuration.getIgnoreMissing().equals(Bundle.LoadIgnoreMissing.NO)) {
+				if (configuration.getIgnoreMissing().equals(BundleConfiguration.IgnoreMissing.NO)) {
 					throw new MissingResourceException("The translation file for " + baseName + " in the language: " + locale + " is missing a key: " + name, baseName, name);
 				}
 				translation = name;
 			}
-			if (configuration.getIgnoreParamMismatch().equals(Bundle.LoadIgnoreParameterMisMatch.NO)) {
+			if (configuration.getIgnoreParameterMisMatch().equals(BundleConfiguration.IgnoreParameterMisMatch.NO)) {
 				MessageFormat f = new MessageFormat(translation);
 				int fieldCount = countFields(f);
 				if (fieldCount != types.length) {

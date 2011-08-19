@@ -1,71 +1,73 @@
 package uk.me.candle.translations;
 
-/**
- * Container for any configuration options.
- *
- * Note that if "ignoreMissing" is true and "ignoreParamMismatch" is false then the class
- * generation will fail for keys that have arguments.
- */
-class BundleConfiguration {
-	private final Bundle.LoadIgnoreMissing ignoreMissing;
-	private final Bundle.LoadIgnoreExtra ignoreExtra;
-	private final Bundle.LoadIgnoreParameterMisMatch ignoreParamMismatch;
-	private final Bundle.AllowDefaultLanguage allowDefaultLanguage;
+import java.util.Locale;
 
-	BundleConfiguration(Bundle.LoadIgnoreMissing ignoreMissing, Bundle.LoadIgnoreExtra ignoreExtra, Bundle.LoadIgnoreParameterMisMatch ignoreParamMismatch) {
-		this.ignoreMissing = ignoreMissing;
-		this.ignoreExtra = ignoreExtra;
-		this.ignoreParamMismatch = ignoreParamMismatch;
-		this.allowDefaultLanguage = Bundle.AllowDefaultLanguage.YES;
-	}
-	BundleConfiguration(Bundle.LoadIgnoreMissing ignoreMissing, Bundle.LoadIgnoreExtra ignoreExtra, Bundle.LoadIgnoreParameterMisMatch ignoreParamMismatch, Bundle.AllowDefaultLanguage allowDefaultLanguage) {
-		this.ignoreMissing = ignoreMissing;
-		this.ignoreExtra = ignoreExtra;
-		this.ignoreParamMismatch = ignoreParamMismatch;
-		this.allowDefaultLanguage = allowDefaultLanguage;
-	}
+/**
+ * @author andrew
+ */
+public interface BundleConfiguration {
+
+	public enum IgnoreMissing { YES, NO };
+	public enum IgnoreExtra { YES, NO };
+	public enum IgnoreParameterMisMatch { YES, NO };
+	public enum AllowDefaultLanguage { YES, NO };
+
 	/**
-	 * Are extra keys in the source properties file ignored?
-	 * @return
-	 */ public Bundle.LoadIgnoreExtra getIgnoreExtra() {
-		return ignoreExtra;
-	}
+	 * This is used in conjunction with the AllowDefaultLanguage parameter to
+	 * provide the default translations.
+	 * @return 
+	 */
+	Locale getDefaultLocale();
+
 	/**
-	 * Are missing keys in the properties file ignored?
-	 * @return
-	 */ public Bundle.LoadIgnoreMissing getIgnoreMissing() {
-		return ignoreMissing;
-	}
+	 * If this is 'YES' then keys that are defined in the class and not defined
+	 * in the properties file will default to the bundle key name.
+	 * If this is 'NO' then the an exception is thrown if there is a method
+	 * defined and there is no key/value pair in the translations.
+	 */
+	IgnoreMissing getIgnoreMissing();
+
 	/**
-	 * Are mismatches between parameter counts ignored?
-	 * @return
-	 */ public Bundle.LoadIgnoreParameterMisMatch getIgnoreParamMismatch() {
-		return ignoreParamMismatch;
-	}
+	 * If this is 'YES' then extra keys in the properties file are ignored.
+	 * If this is 'NO' then an exception is thrown when building the bundle.
+	 */
+	IgnoreExtra getIgnoreExtra();
+
 	/**
-	 * If this is 'NO' then there has to be an exact properties bundle match for the language
-	 * @return
-	 */ public Bundle.AllowDefaultLanguage getAllowDefaultLanguage() {
-		return allowDefaultLanguage;
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (getClass() != obj.getClass()) return false;
-		final BundleConfiguration other = (BundleConfiguration) obj;
-		if (this.ignoreMissing != other.ignoreMissing) return false;
-		if (this.ignoreExtra != other.ignoreExtra) return false;
-		if (this.ignoreParamMismatch != other.ignoreParamMismatch) return false;
-		if (this.allowDefaultLanguage != other.allowDefaultLanguage) return false;
-		return true;
-	}
-	@Override
-	public int hashCode() {
-		int hash = 7;
-		hash = 97 * hash + (this.ignoreMissing != null ? this.ignoreMissing.hashCode() : 0);
-		hash = 97 * hash + (this.ignoreExtra != null ? this.ignoreExtra.hashCode() : 0);
-		hash = 97 * hash + (this.ignoreParamMismatch != null ? this.ignoreParamMismatch.hashCode() : 0);
-		hash = 97 * hash + (this.allowDefaultLanguage != null ? this.allowDefaultLanguage.hashCode() : 0);
-		return hash;
-	}
+	 * If this is 'YES' then values and methods can have different parameter
+	 * lengths: for example; a method:
+	 * named(String name, int number)
+	 * can have a key/value pair of
+	 * name: {0}
+	 * or it may have a value of:
+	 * name: {0}; number: {1}; description: {2}
+	 * 
+	 * If this is 'NO' then the values and methods must have the same number of
+	 * parameters. Using the above example, every value must use exactly the
+	 * same number of parameters. An exception is thrown when there is a mismatch
+	 * in this case.
+	 */
+	IgnoreParameterMisMatch getIgnoreParameterMisMatch();
+
+	/**
+	 * If this is 'YES' then the properties that is used is built up, starting
+	 * with the default language, and replacing values with more specific
+	 * values from the more specific properties files.
+	 * 
+	 * For example:
+	 * Norway has a locale with a specified language, country and variant.
+	 * Language: "no", Country: "NO", Variant: "NY"
+	 * Bundle name: Translations
+	 * Default Language: English.
+	 * 
+	 * On looking up a key, the most specific key value is used. In this example
+	 * the ordering is as such:
+	 * Translations_no_no_ny.properties
+	 * Translations_no_no.properties
+	 * Translations_no.properties
+	 * Translations_en.properties
+	 * 
+	 * If this parameter is 'NO' then only the exact properties file is used.
+	 */
+	AllowDefaultLanguage getAllowDefaultLanguage();
 }

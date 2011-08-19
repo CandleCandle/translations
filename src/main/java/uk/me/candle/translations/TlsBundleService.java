@@ -15,7 +15,7 @@ import java.util.Map;
  *
  * @author Andrew Wheat
  */
-public class BundleCache {
+public class TlsBundleService implements BundleService {
 
 	private static final ThreadLocal<Locale> tlsLocale = new InheritableThreadLocal<Locale>() {
 		@Override protected Locale initialValue() {
@@ -31,14 +31,16 @@ public class BundleCache {
 		tlsLocale.set(locale);
 	}
 
-	private static final Map<Class<? extends Bundle>, Map<Locale, Bundle>> cache = new HashMap<Class<? extends Bundle>, Map<Locale, Bundle>>();
+	private final Map<Class<? extends Bundle>, Map<Locale, Bundle>> cache = new HashMap<Class<? extends Bundle>, Map<Locale, Bundle>>();
 
-	public static synchronized <T extends Bundle> T get(Class<T> cls) {
+  @Override
+	public synchronized <T extends Bundle> T get(Class<T> cls) {
 		return get(cls, getThreadLocale());
 	}
 
 	@SuppressWarnings("unchecked") // cast in the return is safe because T is defined in the method decleration.
-	public static synchronized <T extends Bundle> T get(Class<T> cls, Locale locale) {
+  @Override
+	public synchronized <T extends Bundle> T get(Class<T> cls, Locale locale) {
 		if (!cache.containsKey(cls)) {
 			cache.put(cls, new HashMap<Locale, Bundle>());
 		}

@@ -14,6 +14,10 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.me.candle.translations.BundleConfiguration.AllowDefaultLanguage;
+import uk.me.candle.translations.BundleConfiguration.IgnoreExtra;
+import uk.me.candle.translations.BundleConfiguration.IgnoreMissing;
+import uk.me.candle.translations.BundleConfiguration.IgnoreParameterMisMatch;
 
 /**
  * Handles translations.
@@ -127,11 +131,7 @@ import org.slf4j.LoggerFactory;
 public class Bundle {
 	private static final Logger LOG = LoggerFactory.getLogger(Bundle.class);
 	private static BundleClassLoader BUNDLE_CLASS_LOADER = new BundleClassLoader();
-  
-	public enum LoadIgnoreMissing { YES, NO };
-	public enum LoadIgnoreExtra { YES, NO };
-	public enum LoadIgnoreParameterMisMatch { YES, NO };
-	public enum AllowDefaultLanguage { YES, NO };
+
 
 	/**
 	 * The locale for this bundle. Required for formatting numbers in the subclasses.
@@ -141,10 +141,10 @@ public class Bundle {
 	 *
 	 * default value for new creations if the options are not specified
 	 */
-	public static LoadIgnoreMissing LOAD_IGNORE_MISSING = LoadIgnoreMissing.YES;
-	public static LoadIgnoreExtra LOAD_IGNORE_EXTRA = LoadIgnoreExtra.YES;
-	public static LoadIgnoreParameterMisMatch LOAD_IGNORE_PARAM_MISMATCH = LoadIgnoreParameterMisMatch.YES;
-	public static AllowDefaultLanguage LOAD_ALLOW_DEFAULT = AllowDefaultLanguage.YES;
+	public static BundleConfiguration.IgnoreMissing LOAD_IGNORE_MISSING = BundleConfiguration.IgnoreMissing.YES;
+	public static BundleConfiguration.IgnoreExtra LOAD_IGNORE_EXTRA = BundleConfiguration.IgnoreExtra.YES;
+	public static BundleConfiguration.IgnoreParameterMisMatch LOAD_IGNORE_PARAM_MISMATCH = BundleConfiguration.IgnoreParameterMisMatch.YES;
+	public static BundleConfiguration.AllowDefaultLanguage LOAD_ALLOW_DEFAULT = BundleConfiguration.AllowDefaultLanguage.YES;
 
 	public Locale getLocale() {
 		return locale;
@@ -189,19 +189,19 @@ public class Bundle {
 			, NoSuchMethodException, IOException
 			, IllegalArgumentException, InvocationTargetException
 			{
-		return load(cls, locale, translations, new BundleConfiguration(LOAD_IGNORE_MISSING, LOAD_IGNORE_EXTRA, LOAD_IGNORE_PARAM_MISMATCH, LOAD_ALLOW_DEFAULT));
+		return load(cls, locale, translations, new StandardBundleConfiguration(null, LOAD_IGNORE_MISSING, LOAD_IGNORE_EXTRA, LOAD_IGNORE_PARAM_MISMATCH, LOAD_ALLOW_DEFAULT));
 	}
 
 	/**
 	 * Constructs a bundle implementation for the class and locale with the specified options.
 	 * @see #load(java.lang.Class, java.util.Locale, java.util.Properties, uk.me.candle.translations.Bundle.LoadIgnoreMissing, uk.me.candle.translations.Bundle.LoadIgnoreExtra, uk.me.candle.translations.Bundle.LoadIgnoreParameterMisMatch)
 	 */
-	public static <T extends Bundle> T load(Class<T> cls, Locale locale, LoadIgnoreMissing ignoreMissing, LoadIgnoreExtra ignoreExtra, LoadIgnoreParameterMisMatch ignoreParamMismatch)
+	public static <T extends Bundle> T load(Class<T> cls, Locale locale, IgnoreMissing ignoreMissing, IgnoreExtra ignoreExtra, IgnoreParameterMisMatch ignoreParamMismatch)
 			throws IllegalAccessException, InstantiationException
 			, NoSuchMethodException, IOException
 			, IllegalArgumentException, InvocationTargetException
 			{
-		return load(cls, locale, new BundleConfiguration(ignoreMissing, ignoreExtra, ignoreParamMismatch));
+		return load(cls, locale, new StandardBundleConfiguration(null, ignoreMissing, ignoreExtra, ignoreParamMismatch, LOAD_ALLOW_DEFAULT));
 
 	}
 
@@ -209,12 +209,12 @@ public class Bundle {
 	 * Constructs a bundle implementation for the class and locale with the specified options.
 	 * @see #load(java.lang.Class, java.util.Locale, java.util.Properties, uk.me.candle.translations.Bundle.LoadIgnoreMissing, uk.me.candle.translations.Bundle.LoadIgnoreExtra, uk.me.candle.translations.Bundle.LoadIgnoreParameterMisMatch)
 	 */
-	public static <T extends Bundle> T load(Class<T> cls, Locale locale, LoadIgnoreMissing ignoreMissing, LoadIgnoreExtra ignoreExtra, LoadIgnoreParameterMisMatch ignoreParamMismatch, AllowDefaultLanguage allowDefaultLanguage)
+	public static <T extends Bundle> T load(Class<T> cls, Locale locale, BundleConfiguration.IgnoreMissing ignoreMissing, BundleConfiguration.IgnoreExtra ignoreExtra, BundleConfiguration.IgnoreParameterMisMatch ignoreParamMismatch, BundleConfiguration.AllowDefaultLanguage allowDefaultLanguage)
 			throws IllegalAccessException, InstantiationException
 			, NoSuchMethodException, IOException
 			, IllegalArgumentException, InvocationTargetException
 			{
-		return load(cls, locale, new BundleConfiguration(ignoreMissing, ignoreExtra, ignoreParamMismatch, allowDefaultLanguage));
+		return load(cls, locale, new StandardBundleConfiguration(null, ignoreMissing, ignoreExtra, ignoreParamMismatch, allowDefaultLanguage));
 
 	}
 
@@ -240,20 +240,20 @@ public class Bundle {
 	 * @throws IllegalArgumentException 
 	 * @throws InvocationTargetException if the constructor for the bundle throws an exception.
 	 */
-	static <T extends Bundle> T load(Class<T> cls, Locale locale, Properties translations, LoadIgnoreMissing ignoreMissing, LoadIgnoreExtra ignoreExtra, LoadIgnoreParameterMisMatch ignoreParamMismatch)
+	static <T extends Bundle> T load(Class<T> cls, Locale locale, Properties translations, IgnoreMissing ignoreMissing, IgnoreExtra ignoreExtra, IgnoreParameterMisMatch ignoreParamMismatch)
 			throws IllegalAccessException, InstantiationException
 			, NoSuchMethodException, IOException
 			, IllegalArgumentException, InvocationTargetException
 			{
-		return load(cls, locale, translations, new BundleConfiguration(ignoreMissing, ignoreExtra, ignoreParamMismatch));
+		return load(cls, locale, translations, new StandardBundleConfiguration(null, ignoreMissing, ignoreExtra, ignoreParamMismatch, LOAD_ALLOW_DEFAULT));
 	}
 
-	static <T extends Bundle> T load(Class<T> cls, Locale locale, Properties translations, LoadIgnoreMissing ignoreMissing, LoadIgnoreExtra ignoreExtra, LoadIgnoreParameterMisMatch ignoreParamMismatch, AllowDefaultLanguage allowDefaultLanguage)
+	static <T extends Bundle> T load(Class<T> cls, Locale locale, Properties translations, IgnoreMissing ignoreMissing, IgnoreExtra ignoreExtra, IgnoreParameterMisMatch ignoreParamMismatch, AllowDefaultLanguage allowDefaultLanguage)
 			throws IllegalAccessException, InstantiationException
 			, NoSuchMethodException, IOException
 			, IllegalArgumentException, InvocationTargetException
 			{
-		return load(cls, locale, translations, new BundleConfiguration(ignoreMissing, ignoreExtra, ignoreParamMismatch, allowDefaultLanguage));
+		return load(cls, locale, translations, new StandardBundleConfiguration(null, ignoreMissing, ignoreExtra, ignoreParamMismatch, allowDefaultLanguage));
 	}
 
 	static <T extends Bundle> String getClassNameFor(Class<T> clz, Locale locale) {
@@ -293,7 +293,7 @@ public class Bundle {
 
 		byte[] b2 = cw.toByteArray();
 
-		if (!configuration.getIgnoreExtra().equals(LoadIgnoreExtra.YES)) {
+		if (!configuration.getIgnoreExtra().equals(IgnoreExtra.YES)) {
 			Set<String> extras = checkForExtras(translations, usedKeys);
 
 			if (!extras.isEmpty()) {

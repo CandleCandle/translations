@@ -7,13 +7,6 @@ import java.util.Locale;
  * @author Andrew
  */
 public abstract class SimpleSmallBundle extends Bundle {
-	public static SimpleSmallBundle get() {
-		return BundleCache.get(SimpleSmallBundle.class);
-	}
-
-	public static SimpleSmallBundle get(Locale locale) {
-		return BundleCache.get(SimpleSmallBundle.class, locale);
-	}
 
 	public SimpleSmallBundle(Locale locale) {
 		super(locale);

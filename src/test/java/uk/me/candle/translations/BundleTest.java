@@ -56,9 +56,9 @@ public class BundleTest {
 		Locale locale = Locale.ENGLISH;
 		Properties trns = new Properties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
+				BundleConfiguration.IgnoreMissing.NO,
+				BundleConfiguration.IgnoreExtra.NO,
+				BundleConfiguration.IgnoreParameterMisMatch.NO
 				);
 		assertEquals("there are no parameters", b.noParams());
 	}
@@ -68,9 +68,9 @@ public class BundleTest {
 		Locale locale = Locale.ENGLISH;
 		Properties trns = new Properties();
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns,
-				Bundle.LoadIgnoreMissing.YES,
-				Bundle.LoadIgnoreExtra.YES,
-				Bundle.LoadIgnoreParameterMisMatch.YES
+				BundleConfiguration.IgnoreMissing.YES,
+				BundleConfiguration.IgnoreExtra.YES,
+				BundleConfiguration.IgnoreParameterMisMatch.YES
 				);
 		assertEquals("noParams", b.noParams());
 	}
@@ -81,9 +81,9 @@ public class BundleTest {
 		Properties trns = TranslationBundle.getProperties();
 		trns.setProperty("noParams", "{0}, {1}");
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
+				BundleConfiguration.IgnoreMissing.NO,
+				BundleConfiguration.IgnoreExtra.NO,
+				BundleConfiguration.IgnoreParameterMisMatch.NO
 				);
 		assertEquals("there are no parameters", b.noParams());
 	}
@@ -94,9 +94,9 @@ public class BundleTest {
 		Properties trns = TranslationBundle.getProperties();
 		trns.setProperty("oneParam", "no parameters");
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
+				BundleConfiguration.IgnoreMissing.NO,
+				BundleConfiguration.IgnoreExtra.NO,
+				BundleConfiguration.IgnoreParameterMisMatch.NO
 				);
 		assertEquals("no parameters", b.oneParam("ss"));
 	}
@@ -116,9 +116,9 @@ public class BundleTest {
 		Properties trns = TranslationBundle.getProperties();
 		trns.setProperty("this is extra", "more then enough");
 		TranslationBundle b = Bundle.load(TranslationBundle.class, locale, trns,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO
+				BundleConfiguration.IgnoreMissing.NO,
+				BundleConfiguration.IgnoreExtra.NO,
+				BundleConfiguration.IgnoreParameterMisMatch.NO
 				);
 		assertEquals("there are no parameters", b.noParams());
 	}
@@ -335,9 +335,9 @@ public class BundleTest {
 		Locale locale = Locale.ENGLISH;
 		Properties trns = SubPatternBundle.getProperties();
 		SubPatternBundle b = Bundle.load(SubPatternBundle.class, locale, trns,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO);
+				BundleConfiguration.IgnoreMissing.NO,
+				BundleConfiguration.IgnoreExtra.NO,
+				BundleConfiguration.IgnoreParameterMisMatch.NO);
 		assertEquals("name version", b.subPatternParameter("name", "version", 0, 0, null));
 		assertEquals("name version - profile", b.subPatternParameter("name", "version", 0, 1, "profile"));
 		assertEquals("name version flag", b.subPatternParameter("name", "version", 1, 0, null));
@@ -477,10 +477,10 @@ public class BundleTest {
 	public void testFailToLoadWithoutDefaultsNoBundle() throws Exception {
 		SimpleSmallBundle ssb = Bundle.load(SimpleSmallBundle.class,
 				Locale.FRENCH,
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO,
-				Bundle.AllowDefaultLanguage.NO
+				BundleConfiguration.IgnoreMissing.NO,
+				BundleConfiguration.IgnoreExtra.NO,
+				BundleConfiguration.IgnoreParameterMisMatch.NO,
+				BundleConfiguration.AllowDefaultLanguage.NO
 				);
 		System.out.println(ssb.defaultBg());
 	}
@@ -489,10 +489,10 @@ public class BundleTest {
 	public void testFailToLoadWithoutDefaultsPartialBundleBg() throws Exception {
 		SimpleSmallBundle ssb = Bundle.load(SimpleSmallBundle.class,
 				getLocale("bg", "", ""),
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO,
-				Bundle.AllowDefaultLanguage.NO
+				BundleConfiguration.IgnoreMissing.NO,
+				BundleConfiguration.IgnoreExtra.NO,
+				BundleConfiguration.IgnoreParameterMisMatch.NO,
+				BundleConfiguration.AllowDefaultLanguage.NO
 				);
 		System.out.println(ssb.defaultBg());
 	}
@@ -501,10 +501,10 @@ public class BundleTest {
 	public void testFailToLoadWithoutDefaultsPartialBundleJa() throws Exception {
 		SimpleSmallBundle ssb = Bundle.load(SimpleSmallBundle.class,
 				getLocale("ja", "", ""),
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO,
-				Bundle.AllowDefaultLanguage.NO
+				BundleConfiguration.IgnoreMissing.NO,
+				BundleConfiguration.IgnoreExtra.NO,
+				BundleConfiguration.IgnoreParameterMisMatch.NO,
+				BundleConfiguration.AllowDefaultLanguage.NO
 				);
 		System.out.println(ssb.defaultBg());
 	}
@@ -513,10 +513,10 @@ public class BundleTest {
 	public void testFailToLoadWithoutDefaultsPartialBundleJaJp() throws Exception {
 		SimpleSmallBundle ssb = Bundle.load(SimpleSmallBundle.class,
 				getLocale("ja", "JP", ""),
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO,
-				Bundle.AllowDefaultLanguage.NO
+				BundleConfiguration.IgnoreMissing.NO,
+				BundleConfiguration.IgnoreExtra.NO,
+				BundleConfiguration.IgnoreParameterMisMatch.NO,
+				BundleConfiguration.AllowDefaultLanguage.NO
 				);
 		System.out.println(ssb.defaultBg());
 	}
@@ -525,10 +525,10 @@ public class BundleTest {
 	public void testFailToLoadWithoutDefaultsPartialBundleJaJpJp() throws Exception {
 		SimpleSmallBundle ssb = Bundle.load(SimpleSmallBundle.class,
 				getLocale("ja", "JP", "JP"),
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO,
-				Bundle.AllowDefaultLanguage.NO
+				BundleConfiguration.IgnoreMissing.NO,
+				BundleConfiguration.IgnoreExtra.NO,
+				BundleConfiguration.IgnoreParameterMisMatch.NO,
+				BundleConfiguration.AllowDefaultLanguage.NO
 				);
 		System.out.println(ssb.defaultBg());
 	}
@@ -537,10 +537,10 @@ public class BundleTest {
 	public void testFailToLoadWithoutDefaultsPartialBundleDe() throws Exception {
 		SimpleSmallBundle ssb = Bundle.load(SimpleSmallBundle.class,
 				getLocale("de", "", ""),
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO,
-				Bundle.AllowDefaultLanguage.NO
+				BundleConfiguration.IgnoreMissing.NO,
+				BundleConfiguration.IgnoreExtra.NO,
+				BundleConfiguration.IgnoreParameterMisMatch.NO,
+				BundleConfiguration.AllowDefaultLanguage.NO
 				);
 		System.out.println(ssb.defaultBg());
 	}
@@ -549,10 +549,10 @@ public class BundleTest {
 	public void testFailToLoadWithoutDefaultsPartialBundleDeDe() throws Exception {
 		SimpleSmallBundle ssb = Bundle.load(SimpleSmallBundle.class,
 				getLocale("de", "DE", ""),
-				Bundle.LoadIgnoreMissing.NO,
-				Bundle.LoadIgnoreExtra.NO,
-				Bundle.LoadIgnoreParameterMisMatch.NO,
-				Bundle.AllowDefaultLanguage.NO
+				BundleConfiguration.IgnoreMissing.NO,
+				BundleConfiguration.IgnoreExtra.NO,
+				BundleConfiguration.IgnoreParameterMisMatch.NO,
+				BundleConfiguration.AllowDefaultLanguage.NO
 				);
 		System.out.println(ssb.defaultBg());
 	}
