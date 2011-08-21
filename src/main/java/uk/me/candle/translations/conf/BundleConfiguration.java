@@ -1,7 +1,5 @@
 package uk.me.candle.translations.conf;
 
-import java.util.Locale;
-
 /**
  * @author andrew
  */

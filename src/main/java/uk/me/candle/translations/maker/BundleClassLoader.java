@@ -1,16 +1,14 @@
 package uk.me.candle.translations.maker;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import uk.me.candle.translations.Bundle;
 
 /**
  * Allows class definition from a byte array.
  */
 public final class BundleClassLoader extends ClassLoader {
-	private final Map<String, Class<? extends Bundle>> classMap
+	private Map<String, Class<? extends Bundle>> classMap
 			= new HashMap<String, Class<? extends Bundle>>();
 
 	public BundleClassLoader() { }

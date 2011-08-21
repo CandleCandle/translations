@@ -1,5 +1,6 @@
 package uk.me.candle.translations.maker;
 
+import java.util.Map;
 import uk.me.candle.translations.conf.BundleConfiguration.IgnoreExtra;
 import uk.me.candle.translations.conf.BundleConfiguration.IgnoreMissing;
 import uk.me.candle.translations.conf.BundleConfiguration.IgnoreParameterMisMatch;
@@ -27,7 +28,7 @@ public class BundleTest {
 	@Before
 	public void setup() {
 		try {
-			Field f = BundleMaker.class.getDeclaredField("BUNDLE_CLASS_LOADER");
+			Field f = BundleMaker.class.getDeclaredField("bundleClassLoader");
 			f.setAccessible(true);
 			f.set(null, new BundleClassLoader());
 		} catch (IllegalArgumentException ex) {
