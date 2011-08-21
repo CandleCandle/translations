@@ -13,12 +13,6 @@ public interface BundleConfiguration {
 	public enum AllowDefaultLanguage { YES, NO };
 
 	/**
-	 * This is used in conjunction with the AllowDefaultLanguage parameter to
-	 * provide the default translations.
-	 */
-	Locale getDefaultLocale();
-
-	/**
 	 * If this is 'YES' then keys that are defined in the class and not defined
 	 * in the properties file will default to the bundle key name.
 	 * If this is 'NO' then the an exception is thrown if there is a method
@@ -64,7 +58,7 @@ public interface BundleConfiguration {
 	 * Translations_no_no_ny.properties
 	 * Translations_no_no.properties
 	 * Translations_no.properties
-	 * Translations_en.properties
+	 * Translations.properties
 	 * 
 	 * If this parameter is 'NO' then only the exact properties file is used.
 	 */

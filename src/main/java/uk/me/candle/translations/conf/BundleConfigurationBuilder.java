@@ -11,7 +11,6 @@ import uk.me.candle.translations.conf.BundleConfiguration.IgnoreParameterMisMatc
  * @author andrew
  */
 public final class BundleConfigurationBuilder {
-	Locale defaultLocale;
 	IgnoreMissing ignoreMissing = IgnoreMissing.NO;
 	IgnoreExtra ignoreExtra = IgnoreExtra.NO;
 	IgnoreParameterMisMatch ignoreParameterMisMatch = IgnoreParameterMisMatch.NO;
@@ -36,13 +35,8 @@ public final class BundleConfigurationBuilder {
 		this.ignoreParameterMisMatch = ignoreParameterMisMatch;
 		return this;
 	}
-
-	public BundleConfigurationBuilder defaultLocale(Locale defaultLocale) {
-		this.defaultLocale = defaultLocale;
-		return this;
-	}
 	
 	public BundleConfiguration build() {
-		return new StandardBundleConfiguration(defaultLocale, ignoreMissing, ignoreExtra, ignoreParameterMisMatch, allowDefaultLanguage);
+		return new StandardBundleConfiguration(ignoreMissing, ignoreExtra, ignoreParameterMisMatch, allowDefaultLanguage);
 	}
 }
