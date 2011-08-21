@@ -113,7 +113,7 @@ public class Bundle {
 	 */
 	private final Locale locale;
 
-	public Locale getLocale() {
+	public final Locale getLocale() {
 		return locale;
 	}
 

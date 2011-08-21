@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import uk.me.candle.translations.Bundle;
-import uk.me.candle.translations.BundleCreationException;
 
 /**
  * Caches Bundle instances based on their Class and Locale.
@@ -18,7 +17,7 @@ import uk.me.candle.translations.BundleCreationException;
  *
  * @author Andrew Wheat
  */
-public class TlsBundleService implements BundleService {
+public final class TlsBundleService implements BundleService {
 	private final BundleConfiguration configuration;
 
 	public TlsBundleService() {
@@ -56,12 +55,8 @@ public class TlsBundleService implements BundleService {
 			cache.put(cls, new HashMap<Locale, Bundle>());
 		}
 		if (!cache.get(cls).containsKey(locale)) {
-			try {
-				Bundle b = BundleMaker.load(cls, locale, configuration);
-				cache.get(cls).put(locale, b);
-			} catch (BundleCreationException ex) {
-				throw new RuntimeException(ex);
-			}
+			Bundle b = BundleMaker.load(cls, locale, configuration);
+			cache.get(cls).put(locale, b);
 		}
 
 		return (T) cache.get(cls).get(locale);

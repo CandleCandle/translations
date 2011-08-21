@@ -6,7 +6,7 @@ import com.google.common.base.Objects;
  *
  * @author andrew
  */
-public class Pair<A, B> {
+public final class Pair<A, B> {
 	private final A a;
 	private final B b;
 

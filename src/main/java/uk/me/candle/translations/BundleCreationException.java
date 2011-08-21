@@ -4,7 +4,7 @@ package uk.me.candle.translations;
  *
  * @author Andrew
  */
-public class BundleCreationException extends Exception {
+public class BundleCreationException extends RuntimeException {
 	private static final long serialVersionUID = 1457853680L;
 	public BundleCreationException(String message, Throwable cause) {
 		super(message, cause);

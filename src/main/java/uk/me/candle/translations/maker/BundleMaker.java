@@ -31,8 +31,7 @@ public class BundleMaker {
 		Class<T> cls,
 		Locale locale,
 		BundleConfiguration configuration
-		) throws BundleCreationException
-			{
+		) {
 		try {
 			return load(
 				cls,
@@ -85,7 +84,7 @@ public class BundleMaker {
 
 		return getInstance((Class<T>)result, locale);
 	}
-	private static <T extends Bundle> T getInstance(Class<T> clz, Locale locale) throws BundleCreationException {
+	private static <T extends Bundle> T getInstance(Class<T> clz, Locale locale) {
 		try {
 			Constructor<T> c = clz.getConstructor(new Class<?>[]{Locale.class});
 			return c.newInstance(locale);
@@ -133,14 +132,14 @@ public class BundleMaker {
 		extras.removeAll(usedKeys);
 		return extras;
 	}
-	private static <T extends Bundle> Properties getBundleProperties(Class<T> clz, Locale locale, BundleConfiguration configuration) throws IOException, MissingResourceException {
+	private static <T extends Bundle> Properties getBundleProperties(Class<T> clz, Locale locale, BundleConfiguration configuration) throws IOException {
 		if (configuration.getAllowDefaultLanguage() == AllowDefaultLanguage.YES) {
 			return getBundlePropertiesWithDefaults(clz, locale);
 		} else {
 			return getBundlePropertiesExact(clz, locale);
 		}
 	}
-	private static <T extends Bundle> Properties getBundlePropertiesExact(Class<T> clz, Locale locale) throws IOException, MissingResourceException {
+	private static <T extends Bundle> Properties getBundlePropertiesExact(Class<T> clz, Locale locale) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		sb.append(clz.getPackage().getName().replace(".", "/"));
 		sb.append("/");

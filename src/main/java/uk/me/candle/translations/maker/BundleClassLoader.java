@@ -9,7 +9,7 @@ import uk.me.candle.translations.Bundle;
 /**
  * Allows class definition from a byte array.
  */
-public class BundleClassLoader extends ClassLoader {
+public final class BundleClassLoader extends ClassLoader {
 	Set<Class<?>> classes = new HashSet<Class<?>>();
 	private Map<String, Class<? extends Bundle>> classMap
 			= new HashMap<String, Class<? extends Bundle>>();

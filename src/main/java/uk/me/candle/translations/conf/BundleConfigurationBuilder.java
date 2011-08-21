@@ -10,7 +10,7 @@ import uk.me.candle.translations.conf.BundleConfiguration.IgnoreParameterMisMatc
  *
  * @author andrew
  */
-public class BundleConfigurationBuilder {
+public final class BundleConfigurationBuilder {
 	Locale defaultLocale;
 	IgnoreMissing ignoreMissing = IgnoreMissing.NO;
 	IgnoreExtra ignoreExtra = IgnoreExtra.NO;

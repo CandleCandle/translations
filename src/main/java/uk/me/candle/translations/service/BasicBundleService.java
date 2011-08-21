@@ -5,24 +5,25 @@ import java.util.Locale;
 import java.util.Map;
 import uk.me.candle.translations.Bundle;
 import uk.me.candle.translations.Pair;
+import uk.me.candle.translations.maker.BundleMaker;
 
 /**
  *
  * @author andrew
  */
-public class BasicBundleService implements BundleService {
+public final class BasicBundleService implements BundleService {
 	private final BundleConfiguration configuration;
 	private Locale current;
 
 	public BasicBundleService(BundleConfiguration configuration) {
-		this.configuration = configuration;
+		this(configuration, Locale.getDefault());
 	}
 
 	public BasicBundleService(BundleConfiguration configuration, Locale current) {
 		this.configuration = configuration;
 		this.current = current;
 	}
-	
+
 	Map<Pair<Class<? extends Bundle>, Locale>, Bundle> cache;
 
 	@Override
@@ -31,7 +32,12 @@ public class BasicBundleService implements BundleService {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public <T extends Bundle> T get(Class<T> bundleClass, Locale locale) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		Pair<Class<? extends Bundle>, Locale> key = new Pair<Class<? extends Bundle>, Locale>(bundleClass, locale);
+		if (!cache.containsKey(key)) {
+			cache.put(key, BundleMaker.load(bundleClass, locale, configuration));
+		}
+		return (T)cache.get(key);
 	}
 }

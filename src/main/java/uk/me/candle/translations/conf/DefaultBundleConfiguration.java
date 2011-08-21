@@ -6,7 +6,7 @@ import java.util.Locale;
  *
  * @author Andrew
  */
-public class DefaultBundleConfiguration implements BundleConfiguration {
+public final class DefaultBundleConfiguration implements BundleConfiguration {
 
 	@Override
 	public Locale getDefaultLocale() {

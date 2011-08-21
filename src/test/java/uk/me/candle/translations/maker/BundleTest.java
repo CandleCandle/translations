@@ -70,11 +70,11 @@ public class BundleTest {
 	public void testMissingAllowed() throws Exception {
 		Locale locale = Locale.ENGLISH;
 		Properties trns = new Properties();
-		BundleConfiguration conf = new DefaultBundleConfiguration() {
-			@Override public IgnoreExtra getIgnoreExtra() { return BundleConfiguration.IgnoreExtra.YES; }
-			@Override public IgnoreMissing getIgnoreMissing() { return BundleConfiguration.IgnoreMissing.YES; }
-			@Override public IgnoreParameterMisMatch getIgnoreParameterMisMatch() { return BundleConfiguration.IgnoreParameterMisMatch.YES; }
-		};
+		BundleConfiguration conf = new BundleConfigurationBuilder()
+			.ignoreExtra(IgnoreExtra.YES)
+			.ignoreMissing(IgnoreMissing.YES)
+			.ignoreParameterMisMatch(IgnoreParameterMisMatch.YES)
+			.build();
 		TranslationBundle b = BundleMaker.load(TranslationBundle.class, locale, trns, conf);
 		assertEquals("noParams", b.noParams());
 	}
