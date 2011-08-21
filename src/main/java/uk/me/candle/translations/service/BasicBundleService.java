@@ -1,5 +1,6 @@
 package uk.me.candle.translations.service;
 
+import java.util.HashMap;
 import uk.me.candle.translations.conf.BundleConfiguration;
 import java.util.Locale;
 import java.util.Map;
@@ -15,6 +16,8 @@ public final class BasicBundleService implements BundleService {
 	private final BundleConfiguration configuration;
 	private Locale current;
 
+	private final Map<Pair<Class<? extends Bundle>, Locale>, Bundle> cache;
+
 	public BasicBundleService(BundleConfiguration configuration) {
 		this(configuration, Locale.getDefault());
 	}
@@ -22,9 +25,8 @@ public final class BasicBundleService implements BundleService {
 	public BasicBundleService(BundleConfiguration configuration, Locale current) {
 		this.configuration = configuration;
 		this.current = current;
+		this.cache = new HashMap<Pair<Class<? extends Bundle>, Locale>, Bundle>();
 	}
-
-	Map<Pair<Class<? extends Bundle>, Locale>, Bundle> cache;
 
 	@Override
 	public <T extends Bundle> T get(Class<T> bundleClass) {

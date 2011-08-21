@@ -9,7 +9,7 @@ class MethodImplementationAdapter extends MethodAdapter {
 	private String translation;
 	private String descriptor;
 	private String generatedClassName;
-	MethodImplementationAdapter(MethodVisitor mv, String name, String descriptor, String translation, String generatedClassName) {
+	MethodImplementationAdapter(MethodVisitor mv, String descriptor, String translation, String generatedClassName) {
 		super(mv);
 		this.translation = translation;
 		this.descriptor = descriptor;

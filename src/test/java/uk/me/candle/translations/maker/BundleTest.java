@@ -544,5 +544,13 @@ public class BundleTest {
 		assertNotNull(cl2);
 		assertEquals(ssb1.getClass(), ssb2.getClass());
 	}
+	
+	@Test
+	public void checkThatHelperMethodIsNotChanged() throws Exception {
+		BundleWithHelperMethod bundle = BundleMaker.load(BundleWithHelperMethod.class, getLocale("en", "", ""), configuration);
+		assertEquals("something", bundle.something());
+		assertEquals("SOMETHING", bundle.thisIsAHelperMethod(bundle.something()));
+	}
+	
 }
 

@@ -23,10 +23,14 @@ import uk.me.candle.translations.BundleCreationException;
  *
  * @author Andrew
  */
-public class BundleMaker {
+public final class BundleMaker {
 	private static final Logger LOG = LoggerFactory.getLogger(BundleMaker.class);
 	private static BundleClassLoader BUNDLE_CLASS_LOADER = new BundleClassLoader();
 	
+	private BundleMaker() {
+		throw new AssertionError("Must not call thus constructor");
+	}
+
 	public static <T extends Bundle> T load(
 		Class<T> cls,
 		Locale locale,
@@ -49,7 +53,7 @@ public class BundleMaker {
 		Locale locale,
 		Properties translations,
 		BundleConfiguration configuration
-		) throws BundleCreationException {
+		) {
 		final Set<String> usedKeys = new HashSet<String>();
 		final String newName = getClassNameFor(cls, locale);
 

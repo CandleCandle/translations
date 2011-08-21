@@ -1,6 +1,5 @@
 package uk.me.candle.translations;
 
-import java.text.MessageFormat;
 import java.util.Locale;
 
 /**
@@ -113,13 +112,21 @@ public class Bundle {
 	 */
 	private final Locale locale;
 
+	/**
+	 * 
+	 * @return gets the locale that this bundle represents.
+	 */
 	public final Locale getLocale() {
 		return locale;
 	}
 
+	/**
+	 * @param locale The locale that this bundle will represent
+	 * @throws IllegalArgumentException if the locale is null.
+	 */
 	public Bundle(Locale locale) {
 		if (locale == null) {
-			throw new NullPointerException("The locale cannot be null");
+			throw new IllegalArgumentException("The locale cannot be null");
 		}
 		this.locale = locale;
 	}

@@ -27,11 +27,7 @@ public final class TlsBundleService implements BundleService {
 		this.configuration = configuration;
 	}
 
-	private final ThreadLocal<Locale> tlsLocale = new InheritableThreadLocal<Locale>() {
-		@Override protected Locale initialValue() {
-			return Locale.getDefault();
-		}
-	};
+	private final ThreadLocal<Locale> tlsLocale = new InheritableThreadLocalImpl();
 
 	public Locale getThreadLocale() {
 		return tlsLocale.get();
@@ -60,5 +56,13 @@ public final class TlsBundleService implements BundleService {
 		}
 
 		return (T) cache.get(cls).get(locale);
+	}
+
+	private static class InheritableThreadLocalImpl extends InheritableThreadLocal<Locale> {
+		public InheritableThreadLocalImpl() {
+		}
+		@Override protected Locale initialValue() {
+			return Locale.getDefault();
+		}
 	}
 }
