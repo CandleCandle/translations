@@ -31,6 +31,8 @@ public class Pair<A, B> {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
+		@SuppressWarnings("unchecked") // if the class are not equal, then the above 'if' will
+		// result in the method returning.
 		final Pair<A, B> other = (Pair<A, B>) obj;
 		if (this.a != other.a && (this.a == null || !this.a.equals(other.a))) {
 			return false;

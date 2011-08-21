@@ -471,7 +471,7 @@ public class BundleTest {
 			.allowDefaultLanguage(BundleConfiguration.AllowDefaultLanguage.NO)
 			.build();
 		SimpleSmallBundle ssb = BundleMaker.load(SimpleSmallBundle.class, Locale.FRENCH, conf);
-		System.out.println(ssb.defaultBg());
+		LOG.info(ssb.defaultBg());
 	}
 
 	@Test(expected=MissingResourceException.class)
@@ -481,7 +481,7 @@ public class BundleTest {
 			.build();
 		SimpleSmallBundle ssb = BundleMaker.load(SimpleSmallBundle.class,
 				getLocale("bg", "", ""), conf);
-		System.out.println(ssb.defaultBg());
+		LOG.info(ssb.defaultBg());
 	}
 
 	@Test(expected=MissingResourceException.class)
@@ -491,7 +491,7 @@ public class BundleTest {
 			.build();
 		SimpleSmallBundle ssb = BundleMaker.load(SimpleSmallBundle.class,
 				getLocale("ja", "", ""), conf);
-		System.out.println(ssb.defaultBg());
+		LOG.info(ssb.defaultBg());
 	}
 
 	@Test(expected=MissingResourceException.class)
@@ -501,7 +501,7 @@ public class BundleTest {
 			.build();
 		SimpleSmallBundle ssb = BundleMaker.load(SimpleSmallBundle.class,
 				getLocale("ja", "JP", ""), conf);
-		System.out.println(ssb.defaultBg());
+		LOG.info(ssb.defaultBg());
 	}
 
 	@Test(expected=MissingResourceException.class)
@@ -511,7 +511,7 @@ public class BundleTest {
 			.build();
 		SimpleSmallBundle ssb = BundleMaker.load(SimpleSmallBundle.class,
 				getLocale("ja", "JP", "JP"), conf);
-		System.out.println(ssb.defaultBg());
+		LOG.info(ssb.defaultBg());
 	}
 
 	@Test(expected=MissingResourceException.class)
@@ -521,7 +521,7 @@ public class BundleTest {
 			.build();
 		SimpleSmallBundle ssb = BundleMaker.load(SimpleSmallBundle.class,
 				getLocale("de", "", ""), conf);
-		System.out.println(ssb.defaultBg());
+		LOG.info(ssb.defaultBg());
 	}
 
 	@Test(expected=MissingResourceException.class)
@@ -531,7 +531,7 @@ public class BundleTest {
 			.build();
 		SimpleSmallBundle ssb = BundleMaker.load(SimpleSmallBundle.class,
 				getLocale("de", "DE", ""), conf);
-		System.out.println(ssb.defaultBg());
+		LOG.info(ssb.defaultBg());
 	}
 
 	@Test
