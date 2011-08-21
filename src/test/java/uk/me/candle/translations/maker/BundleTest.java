@@ -1,5 +1,8 @@
 package uk.me.candle.translations;
 
+import uk.me.candle.translations.maker.BundleClassLoader;
+import uk.me.candle.translations.conf.BundleConfiguration;
+import uk.me.candle.translations.conf.DefaultBundleConfiguration;
 import java.lang.reflect.Field;
 import java.util.Locale;
 import java.util.MissingResourceException;

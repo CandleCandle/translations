@@ -14,10 +14,10 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.me.candle.translations.BundleConfiguration.AllowDefaultLanguage;
-import uk.me.candle.translations.BundleConfiguration.IgnoreExtra;
-import uk.me.candle.translations.BundleConfiguration.IgnoreMissing;
-import uk.me.candle.translations.BundleConfiguration.IgnoreParameterMisMatch;
+import uk.me.candle.translations.conf.BundleConfiguration.AllowDefaultLanguage;
+import uk.me.candle.translations.conf.BundleConfiguration.IgnoreExtra;
+import uk.me.candle.translations.conf.BundleConfiguration.IgnoreMissing;
+import uk.me.candle.translations.conf.BundleConfiguration.IgnoreParameterMisMatch;
 
 /**
  * Handles translations.

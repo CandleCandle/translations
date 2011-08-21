@@ -1,4 +1,4 @@
-package uk.me.candle.translations;
+package uk.me.candle.translations.maker;
 
 import java.text.ChoiceFormat;
 import java.text.Format;
@@ -14,6 +14,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.me.candle.translations.conf.BundleConfiguration;
 
 class ImplementMethodsAdapter extends ClassAdapter {
 	private static final Logger LOG = LoggerFactory.getLogger(ImplementMethodsAdapter.class);

@@ -1,7 +1,10 @@
-package uk.me.candle.translations;
+package uk.me.candle.translations.service;
 
+import uk.me.candle.translations.conf.BundleConfiguration;
 import java.util.Locale;
 import java.util.Map;
+import uk.me.candle.translations.Bundle;
+import uk.me.candle.translations.Pair;
 
 /**
  *

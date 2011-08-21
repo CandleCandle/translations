@@ -1,6 +1,7 @@
-package uk.me.candle.translations;
+package uk.me.candle.translations.service;
 
 import java.util.Locale;
+import uk.me.candle.translations.Bundle;
 
 /**
  *

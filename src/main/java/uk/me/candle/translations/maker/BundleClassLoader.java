@@ -1,9 +1,10 @@
-package uk.me.candle.translations;
+package uk.me.candle.translations.maker;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import uk.me.candle.translations.Bundle;
 
 /**
  * Allows class definition from a byte array.

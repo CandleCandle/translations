@@ -1,4 +1,4 @@
-package uk.me.candle.translations;
+package uk.me.candle.translations.maker;
 
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;

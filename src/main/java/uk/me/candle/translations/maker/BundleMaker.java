@@ -1,4 +1,4 @@
-package uk.me.candle.translations;
+package uk.me.candle.translations.maker;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,8 +14,11 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.me.candle.translations.BundleConfiguration.AllowDefaultLanguage;
-import uk.me.candle.translations.BundleConfiguration.IgnoreExtra;
+import uk.me.candle.translations.Bundle;
+import uk.me.candle.translations.conf.BundleConfiguration;
+import uk.me.candle.translations.conf.BundleConfiguration.AllowDefaultLanguage;
+import uk.me.candle.translations.conf.BundleConfiguration.IgnoreExtra;
+import uk.me.candle.translations.BundleCreationException;
 
 /**
  *
@@ -25,7 +28,7 @@ public class BundleMaker {
 	private static final Logger LOG = LoggerFactory.getLogger(BundleMaker.class);
 	private static BundleClassLoader BUNDLE_CLASS_LOADER = new BundleClassLoader();
 	
-	static <T extends Bundle> T load(
+	public static <T extends Bundle> T load(
 		Class<T> cls,
 		Locale locale,
 		BundleConfiguration configuration

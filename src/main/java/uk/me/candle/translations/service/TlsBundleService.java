@@ -1,10 +1,15 @@
-package uk.me.candle.translations;
+package uk.me.candle.translations.service;
 
+import uk.me.candle.translations.conf.DefaultBundleConfiguration;
+import uk.me.candle.translations.conf.BundleConfiguration;
+import uk.me.candle.translations.maker.BundleMaker;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import uk.me.candle.translations.Bundle;
+import uk.me.candle.translations.BundleCreationException;
 
 /**
  * Caches Bundle instances based on their Class and Locale.

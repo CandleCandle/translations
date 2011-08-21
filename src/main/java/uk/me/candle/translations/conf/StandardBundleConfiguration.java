@@ -1,10 +1,10 @@
-package uk.me.candle.translations;
+package uk.me.candle.translations.conf;
 
 import java.util.Locale;
-import uk.me.candle.translations.BundleConfiguration.AllowDefaultLanguage;
-import uk.me.candle.translations.BundleConfiguration.IgnoreExtra;
-import uk.me.candle.translations.BundleConfiguration.IgnoreMissing;
-import uk.me.candle.translations.BundleConfiguration.IgnoreParameterMisMatch;
+import uk.me.candle.translations.conf.BundleConfiguration.AllowDefaultLanguage;
+import uk.me.candle.translations.conf.BundleConfiguration.IgnoreExtra;
+import uk.me.candle.translations.conf.BundleConfiguration.IgnoreMissing;
+import uk.me.candle.translations.conf.BundleConfiguration.IgnoreParameterMisMatch;
 
 /**
  *
