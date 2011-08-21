@@ -19,21 +19,24 @@ import uk.me.candle.translations.Bundle;
  */
 public final class TlsBundleService implements BundleService {
 	private final BundleConfiguration configuration;
+	private final ThreadLocal<Locale> tlsLocale;
 
 	public TlsBundleService() {
-		this(new DefaultBundleConfiguration());
+		this(new DefaultBundleConfiguration(), Locale.getDefault());
 	}
 	public TlsBundleService(BundleConfiguration configuration) {
-		this.configuration = configuration;
+		this(configuration, Locale.getDefault());
 	}
-
-	private final ThreadLocal<Locale> tlsLocale = new InheritableThreadLocalImpl();
+	public TlsBundleService(BundleConfiguration configuration, Locale initial) {
+		this.configuration = configuration;
+		tlsLocale = new InheritableThreadLocalImpl(initial);
+	}
 
 	public Locale getThreadLocale() {
 		return tlsLocale.get();
 	}
 
-	public void setThreadLocale(Locale locale) {
+	public synchronized void setThreadLocale(Locale locale) {
 		tlsLocale.set(locale);
 	}
 
@@ -59,10 +62,12 @@ public final class TlsBundleService implements BundleService {
 	}
 
 	private static class InheritableThreadLocalImpl extends InheritableThreadLocal<Locale> {
-		public InheritableThreadLocalImpl() {
+		private final Locale initial;
+		 InheritableThreadLocalImpl(Locale l) {
+			this.initial = l;
 		}
 		@Override protected Locale initialValue() {
-			return Locale.getDefault();
+			return initial;
 		}
 	}
 }
