@@ -1,7 +1,8 @@
-package uk.me.candle.translations;
+package uk.me.candle.translations.maker;
 
 import java.util.Locale;
 import java.util.Properties;
+import uk.me.candle.translations.Bundle;
 
 /**
  *

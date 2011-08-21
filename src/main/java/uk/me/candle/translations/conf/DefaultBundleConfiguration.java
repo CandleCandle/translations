@@ -6,12 +6,11 @@ import java.util.Locale;
  *
  * @author Andrew
  */
-public enum DefaultBundleConfiguration implements BundleConfiguration {
-	INSTANCE;
+public class DefaultBundleConfiguration implements BundleConfiguration {
 
 	@Override
 	public Locale getDefaultLocale() {
-		return Locale.getDefault();
+		return Locale.ENGLISH;
 	}
 	@Override
 	public IgnoreMissing getIgnoreMissing() {

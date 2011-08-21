@@ -1,4 +1,4 @@
-package uk.me.candle.translations;
+package uk.me.candle.translations.maker;
 
 /**
  *

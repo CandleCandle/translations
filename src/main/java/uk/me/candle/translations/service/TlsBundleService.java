@@ -24,7 +24,7 @@ public class TlsBundleService implements BundleService {
 	private final BundleConfiguration configuration;
 
 	public TlsBundleService() {
-		this(DefaultBundleConfiguration.INSTANCE);
+		this(new DefaultBundleConfiguration());
 	}
 	public TlsBundleService(BundleConfiguration configuration) {
 		this.configuration = configuration;

@@ -46,7 +46,7 @@ public class BundleMaker {
 		}
 	}
 	@SuppressWarnings("unchecked") // the return statement. it's safe.
-	static <T extends Bundle> T load(
+	public static <T extends Bundle> T load(
 		Class<T> cls,
 		Locale locale,
 		Properties translations,

@@ -14,9 +14,9 @@ public class BundleClassLoader extends ClassLoader {
 	private Map<String, Class<? extends Bundle>> classMap
 			= new HashMap<String, Class<? extends Bundle>>();
 
-	BundleClassLoader() { }
+	public BundleClassLoader() { }
 
-	BundleClassLoader(ClassLoader parent) {
+	public BundleClassLoader(ClassLoader parent) {
 		super(parent);
 	}
 
