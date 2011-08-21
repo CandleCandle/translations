@@ -25,7 +25,7 @@ import uk.me.candle.translations.BundleCreationException;
  */
 public final class BundleMaker {
 	private static final Logger LOG = LoggerFactory.getLogger(BundleMaker.class);
-	private static BundleClassLoader BUNDLE_CLASS_LOADER = new BundleClassLoader();
+	private static final BundleClassLoader BUNDLE_CLASS_LOADER = new BundleClassLoader();
 	
 	private BundleMaker() {
 		throw new AssertionError("Must not call thus constructor");

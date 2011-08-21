@@ -75,7 +75,8 @@ class ImplementMethodsAdapter extends ClassAdapter {
 	 * to do something similar to count the fields used.
 	 * @param messageFormat message format instance to count the maximum field number used.
 	 * @return the maximum number of fields used in
-	 */ private int countFields(MessageFormat messageFormat) {
+	 */
+	private int countFields(MessageFormat messageFormat) {
 		Format[] formats = messageFormat.getFormatsByArgumentIndex();
 		int count = messageFormat.getFormatsByArgumentIndex().length;
 		for (Format ff : formats) {

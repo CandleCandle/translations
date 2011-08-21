@@ -53,6 +53,7 @@ class MethodImplementationAdapter extends MethodAdapter {
 		mv.visitMaxs(0, 0); // (1, 1) // calculated due to ClassWriter.COMPUTE_MAXS
 	}
 	private void boxIfNeededAndAddToArray(Type t, int idx, int reg) {
+		final String valueOf = "valueOf";
 		mv.visitInsn(Opcodes.DUP);
 		mv.visitLdcInsn(idx);
 		switch (t.getSort()) {
@@ -80,28 +81,28 @@ class MethodImplementationAdapter extends MethodAdapter {
 		}
 		switch (t.getSort()) {
 			case Type.BOOLEAN:
-				mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;");
+				mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Boolean", valueOf, "(Z)Ljava/lang/Boolean;");
 				break;
 			case Type.BYTE:
-				mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Byte", "valueOf", "(B)Ljava/lang/Byte;");
+				mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Byte", valueOf, "(B)Ljava/lang/Byte;");
 				break;
 			case Type.CHAR:
-				mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Character", "valueOf", "(C)Ljava/lang/Character;");
+				mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Character", valueOf, "(C)Ljava/lang/Character;");
 				break;
 			case Type.SHORT:
-				mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Short", "valueOf", "(S)Ljava/lang/Short;");
+				mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Short", valueOf, "(S)Ljava/lang/Short;");
 				break;
 			case Type.INT:
-				mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;");
+				mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Integer", valueOf, "(I)Ljava/lang/Integer;");
 				break;
 			case Type.LONG:
-				mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Long", "valueOf", "(J)Ljava/lang/Long;");
+				mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Long", valueOf, "(J)Ljava/lang/Long;");
 				break;
 			case Type.FLOAT:
-				mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Float", "valueOf", "(F)Ljava/lang/Float;");
+				mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Float", valueOf, "(F)Ljava/lang/Float;");
 				break;
 			case Type.DOUBLE:
-				mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Double", "valueOf", "(D)Ljava/lang/Double;");
+				mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Double", valueOf, "(D)Ljava/lang/Double;");
 				break;
 			case Type.OBJECT:
 				break;

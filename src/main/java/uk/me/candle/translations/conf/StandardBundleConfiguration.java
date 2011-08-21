@@ -1,6 +1,5 @@
 package uk.me.candle.translations.conf;
 
-import java.util.Locale;
 import uk.me.candle.translations.conf.BundleConfiguration.AllowDefaultLanguage;
 import uk.me.candle.translations.conf.BundleConfiguration.IgnoreExtra;
 import uk.me.candle.translations.conf.BundleConfiguration.IgnoreMissing;

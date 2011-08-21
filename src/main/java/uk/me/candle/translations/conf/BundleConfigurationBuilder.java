@@ -1,6 +1,5 @@
 package uk.me.candle.translations.conf;
 
-import java.util.Locale;
 import uk.me.candle.translations.conf.BundleConfiguration.AllowDefaultLanguage;
 import uk.me.candle.translations.conf.BundleConfiguration.IgnoreExtra;
 import uk.me.candle.translations.conf.BundleConfiguration.IgnoreMissing;
@@ -11,10 +10,10 @@ import uk.me.candle.translations.conf.BundleConfiguration.IgnoreParameterMisMatc
  * @author andrew
  */
 public final class BundleConfigurationBuilder {
-	IgnoreMissing ignoreMissing = IgnoreMissing.NO;
-	IgnoreExtra ignoreExtra = IgnoreExtra.NO;
-	IgnoreParameterMisMatch ignoreParameterMisMatch = IgnoreParameterMisMatch.NO;
-	AllowDefaultLanguage allowDefaultLanguage = AllowDefaultLanguage.YES;
+	private IgnoreMissing ignoreMissing = IgnoreMissing.NO;
+	private IgnoreExtra ignoreExtra = IgnoreExtra.NO;
+	private IgnoreParameterMisMatch ignoreParameterMisMatch = IgnoreParameterMisMatch.NO;
+	private AllowDefaultLanguage allowDefaultLanguage = AllowDefaultLanguage.YES;
 
 	public BundleConfigurationBuilder allowDefaultLanguage(AllowDefaultLanguage allowDefaultLanguage) {
 		this.allowDefaultLanguage = allowDefaultLanguage;
