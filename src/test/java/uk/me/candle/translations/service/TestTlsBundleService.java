@@ -6,7 +6,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import uk.me.candle.translations.conf.DefaultBundleConfiguration;
 import uk.me.candle.translations.maker.SimpleSmallBundle;
-import uk.me.candle.translations.maker.TranslationBundle;
 
 /**
  *
