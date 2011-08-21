@@ -34,7 +34,7 @@ class ImplementMethodsAdapter extends ClassAdapter {
 	}
 	@Override
 	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-		newName = Bundle.getClassNameFor(name, locale);
+		newName = BundleMaker.getClassNameFor(name, locale);
 		baseName = name;
 		cv.visit(Opcodes.V1_6, access - Opcodes.ACC_ABSTRACT, newName, signature, name, interfaces);
 	}
