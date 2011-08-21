@@ -3,8 +3,6 @@ package uk.me.candle.translations.service;
 import uk.me.candle.translations.conf.DefaultBundleConfiguration;
 import uk.me.candle.translations.conf.BundleConfiguration;
 import uk.me.candle.translations.maker.BundleMaker;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -30,17 +28,17 @@ public class TlsBundleService implements BundleService {
 		this.configuration = configuration;
 	}
 
-	private static final ThreadLocal<Locale> tlsLocale = new InheritableThreadLocal<Locale>() {
+	private final ThreadLocal<Locale> tlsLocale = new InheritableThreadLocal<Locale>() {
 		@Override protected Locale initialValue() {
 			return Locale.getDefault();
 		}
 	};
 
-	public static Locale getThreadLocale() {
+	public Locale getThreadLocale() {
 		return tlsLocale.get();
 	}
 
-	public static void setThreadLocale(Locale locale) {
+	public void setThreadLocale(Locale locale) {
 		tlsLocale.set(locale);
 	}
 

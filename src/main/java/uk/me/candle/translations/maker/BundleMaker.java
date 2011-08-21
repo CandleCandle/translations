@@ -9,7 +9,6 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.Set;
-import java.util.logging.Level;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.slf4j.Logger;

@@ -1,23 +1,7 @@
 package uk.me.candle.translations;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
-import java.util.HashSet;
 import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.Properties;
-import java.util.Set;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import uk.me.candle.translations.conf.BundleConfiguration.AllowDefaultLanguage;
-import uk.me.candle.translations.conf.BundleConfiguration.IgnoreExtra;
-import uk.me.candle.translations.conf.BundleConfiguration.IgnoreMissing;
-import uk.me.candle.translations.conf.BundleConfiguration.IgnoreParameterMisMatch;
 
 /**
  * Handles translations.
@@ -98,14 +82,9 @@ import uk.me.candle.translations.conf.BundleConfiguration.IgnoreParameterMisMatc
  * <pre>{@code
  *	&#40;Test
  *	public void testFooBundle_en() throws Exception {
- *		// Load the bundle with the check flags enabled.
  *		// this will throw an exception if there is an error
  *		// with either the abstract Class or the properties file
- *		Foo foo = Bundle.load(Foo.class, Locale.ENGLISH,
- *				LoadIgnoreMissing.NO,
- *				LoadIgnoreExtra.NO,
- *				LoadIgnoreParameterMisMatch.NO,
- *				AllowDefaultLanguage.NO);
+ *		Foo foo = Bundle.load(Foo.class, Locale.ENGLISH, new DefaultBundleConfiguration());
  *		assertNotNull(foo.bar());
  *	}
  * }</pre>

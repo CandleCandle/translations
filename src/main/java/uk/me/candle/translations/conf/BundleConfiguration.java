@@ -15,7 +15,6 @@ public interface BundleConfiguration {
 	/**
 	 * This is used in conjunction with the AllowDefaultLanguage parameter to
 	 * provide the default translations.
-	 * @return 
 	 */
 	Locale getDefaultLocale();
 
