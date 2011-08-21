@@ -1,11 +1,10 @@
 package uk.me.candle.translations.service;
 
-import java.util.HashMap;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import uk.me.candle.translations.conf.BundleConfiguration;
 import java.util.Locale;
-import java.util.Map;
 import uk.me.candle.translations.Bundle;
-import uk.me.candle.translations.Pair;
 import uk.me.candle.translations.maker.BundleMaker;
 
 /**
@@ -16,7 +15,7 @@ public final class BasicBundleService implements BundleService {
 	private final BundleConfiguration configuration;
 	private Locale current;
 
-	private final Map<Pair<Class<? extends Bundle>, Locale>, Bundle> cache;
+	private final Table<Class<? extends Bundle>, Locale, Bundle> cache;
 
 	public BasicBundleService(BundleConfiguration configuration) {
 		this(configuration, Locale.getDefault());
@@ -25,7 +24,7 @@ public final class BasicBundleService implements BundleService {
 	public BasicBundleService(BundleConfiguration configuration, Locale current) {
 		this.configuration = configuration;
 		this.current = current;
-		this.cache = new HashMap<Pair<Class<? extends Bundle>, Locale>, Bundle>();
+		this.cache = HashBasedTable.create();
 	}
 
 	@Override
@@ -36,10 +35,9 @@ public final class BasicBundleService implements BundleService {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends Bundle> T get(Class<T> bundleClass, Locale locale) {
-		Pair<Class<? extends Bundle>, Locale> key = new Pair<Class<? extends Bundle>, Locale>(bundleClass, locale);
-		if (!cache.containsKey(key)) {
-			cache.put(key, BundleMaker.load(bundleClass, locale, configuration));
+		if (!cache.contains(bundleClass, locale)) {
+			cache.put(bundleClass, locale, BundleMaker.load(bundleClass, locale, configuration));
 		}
-		return (T)cache.get(key);
+		return (T)cache.get(bundleClass, locale);
 	}
 }

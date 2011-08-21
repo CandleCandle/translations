@@ -1,11 +1,12 @@
 package uk.me.candle.translations.service;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import uk.me.candle.translations.conf.DefaultBundleConfiguration;
 import uk.me.candle.translations.conf.BundleConfiguration;
 import uk.me.candle.translations.maker.BundleMaker;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import uk.me.candle.translations.Bundle;
 
 /**
@@ -21,6 +22,8 @@ public final class TlsBundleService implements BundleService {
 	private final BundleConfiguration configuration;
 	private final ThreadLocal<Locale> tlsLocale;
 
+	private final Table<Class<? extends Bundle>, Locale, Bundle> cache;
+
 	public TlsBundleService() {
 		this(new DefaultBundleConfiguration(), Locale.getDefault());
 	}
@@ -29,7 +32,8 @@ public final class TlsBundleService implements BundleService {
 	}
 	public TlsBundleService(BundleConfiguration configuration, Locale initial) {
 		this.configuration = configuration;
-		tlsLocale = new InheritableThreadLocalImpl(initial);
+		this.tlsLocale = new InheritableThreadLocalImpl(initial);
+		this.cache = HashBasedTable.create();
 	}
 
 	public synchronized Locale getThreadLocale() {
@@ -40,8 +44,6 @@ public final class TlsBundleService implements BundleService {
 		tlsLocale.set(locale);
 	}
 
-	private final Map<Class<? extends Bundle>, Map<Locale, Bundle>> cache = new HashMap<Class<? extends Bundle>, Map<Locale, Bundle>>();
-
 	@Override
 	public synchronized <T extends Bundle> T get(Class<T> cls) {
 		return get(cls, getThreadLocale());
@@ -50,15 +52,10 @@ public final class TlsBundleService implements BundleService {
 	@SuppressWarnings("unchecked") // cast in the return is safe because T is defined in the method decleration.
 	@Override
 	public synchronized <T extends Bundle> T get(Class<T> cls, Locale locale) {
-		if (!cache.containsKey(cls)) {
-			cache.put(cls, new HashMap<Locale, Bundle>());
+		if (!cache.contains(cls, locale)) {
+			cache.put(cls, locale, BundleMaker.load(cls, locale, configuration));
 		}
-		if (!cache.get(cls).containsKey(locale)) {
-			Bundle b = BundleMaker.load(cls, locale, configuration);
-			cache.get(cls).put(locale, b);
-		}
-
-		return (T) cache.get(cls).get(locale);
+		return (T)cache.get(cls, locale);
 	}
 
 	private static class InheritableThreadLocalImpl extends InheritableThreadLocal<Locale> {
