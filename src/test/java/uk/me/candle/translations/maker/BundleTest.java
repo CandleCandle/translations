@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.me.candle.translations.BundleCreationException;
 import uk.me.candle.translations.conf.BundleConfigurationBuilder;
 import static org.junit.Assert.*;
 
@@ -552,6 +553,13 @@ public class BundleTest {
 		assertEquals("something", bundle.something());
 		assertEquals("SOMETHING", bundle.thisIsAHelperMethod(bundle.something()));
 	}
-	
+
+	@Test(expected=BundleCreationException.class)
+	public void badMethodReturnValue() throws Exception {
+		BundleConfiguration conf = new BundleConfigurationBuilder()
+			.ignoreMissing(IgnoreMissing.YES)
+			.build();
+		BundleMaker.load(FailBundle.class, getLocale("en", "", ""), conf);
+	}
 }
 

@@ -14,6 +14,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.me.candle.translations.BundleCreationException;
 import uk.me.candle.translations.conf.BundleConfiguration;
 
 class ImplementMethodsAdapter extends ClassAdapter {
@@ -41,7 +42,13 @@ class ImplementMethodsAdapter extends ClassAdapter {
 	}
 	@Override
 	public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-		if ((access & Opcodes.ACC_ABSTRACT) > 0 && Type.getReturnType(desc).equals(Type.getType(String.class))) {
+		if ((access & Opcodes.ACC_ABSTRACT) > 0) {
+			if (!Type.getReturnType(desc).equals(Type.getType(String.class))) {
+				// method is abstract, but the return type is not a String.
+				// we cannot thus implement the method in question.
+				// this is therefore an error condition.
+				throw new BundleCreationException("The method " + name + " is abstract yet it's return type is not a String.");
+			}
 			Type[] types = Type.getArgumentTypes(desc);
 			String translation = translations.getProperty(name);
 			// If we are ignoring the

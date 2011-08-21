@@ -14,6 +14,12 @@ import java.util.Locale;
  * arguments of the method as the parameters of the MessageFormat</li>
  * <li>Methods must be abstract and have a String return value.</li>
  * <li>Classes must have an accessible constructor that takes a java.util.Locale.</li>
+ * <li>There may be other methods in the bundle class, but if they are abstract then they
+ * must return a String. Attempting to create a bundle of a class that contains
+ * abstract methods that return something that is not a String will cause a BundleCreationException.
+ * The reason for this restriction is that there is no way to define these methods.
+ * If the methods are left undefined then attempting to call one at runtime will
+ * cause an AbstractMethodError</li>
  * </ul>
  *
  * Bundle class:

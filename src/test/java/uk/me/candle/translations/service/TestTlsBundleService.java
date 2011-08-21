@@ -47,6 +47,15 @@ public class TestTlsBundleService {
 		t.join();
 		assertEquals(42, integer.get());
 	}
+	@Test
+	public void testUseOtherBundleActuallyUseCache() throws Exception {
+		Locale.setDefault(Locale.ENGLISH);
+		TlsBundleService bbs = new TlsBundleService(new DefaultBundleConfiguration());
+		SimpleSmallBundle bundle = bbs.get(SimpleSmallBundle.class, Locale.GERMAN);
+		assertEquals("de simple", bundle.simple());
+		SimpleSmallBundle bundle2 = bbs.get(SimpleSmallBundle.class, Locale.GERMAN);
+		assertTrue("The cache was not used, a different instance was returned.", bundle == bundle2);
+	}
 
 	private static class Runner implements Runnable {
 		private final AtomicInteger integer;

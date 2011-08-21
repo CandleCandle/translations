@@ -32,7 +32,7 @@ public final class TlsBundleService implements BundleService {
 		tlsLocale = new InheritableThreadLocalImpl(initial);
 	}
 
-	public Locale getThreadLocale() {
+	public synchronized Locale getThreadLocale() {
 		return tlsLocale.get();
 	}
 

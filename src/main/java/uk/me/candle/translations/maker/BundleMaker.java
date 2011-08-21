@@ -28,7 +28,7 @@ public final class BundleMaker {
 	private static BundleClassLoader bundleClassLoader = new BundleClassLoader();
 	
 	private BundleMaker() {
-		throw new AssertionError("Must not call thus constructor");
+		throw new AssertionError("Must not call this constructor");
 	}
 
 	public static <T extends Bundle> T load(
