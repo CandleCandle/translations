@@ -394,7 +394,7 @@ public class BundleTest {
 		SimpleSmallBundle ssbDEDE = BundleMaker.load(SimpleSmallBundle.class, getLocale("de", "DE", ""), configuration);
 		assertEquals("de_de default only", ssbDEDE.defaultOnly());
 	}
-	
+
 	@Test
 	public void testDefaultLanguageDefaultBg() throws Exception {
 		SimpleSmallBundle ssb = BundleMaker.load(SimpleSmallBundle.class, Locale.ENGLISH, configuration);
@@ -412,7 +412,7 @@ public class BundleTest {
 		SimpleSmallBundle ssbDEDE = BundleMaker.load(SimpleSmallBundle.class, getLocale("de", "DE", ""), configuration);
 		assertEquals("de_de default and Bulgarian", ssbDEDE.defaultBg());
 	}
-	
+
 	@Test
 	public void testDefaultLanguageDefaultBgJa() throws Exception {
 		SimpleSmallBundle ssb = BundleMaker.load(SimpleSmallBundle.class, Locale.ENGLISH, configuration);
@@ -546,7 +546,7 @@ public class BundleTest {
 		assertNotNull(cl2);
 		assertEquals(ssb1.getClass(), ssb2.getClass());
 	}
-	
+
 	@Test
 	public void checkThatHelperMethodIsNotChanged() throws Exception {
 		BundleWithHelperMethod bundle = BundleMaker.load(BundleWithHelperMethod.class, getLocale("en", "", ""), configuration);
@@ -560,6 +560,14 @@ public class BundleTest {
 			.ignoreMissing(IgnoreMissing.YES)
 			.build();
 		BundleMaker.load(FailBundle.class, getLocale("en", "", ""), conf);
+	}
+
+	@Test(expected=BundleCreationException.class)
+	public void nonPublicAbstractMethod() throws Exception {
+		BundleConfiguration conf = new BundleConfigurationBuilder()
+			.ignoreMissing(IgnoreMissing.YES)
+			.build();
+		BundleMaker.load(NonPublicTranslation.class, getLocale("en", "", ""), conf);
 	}
 }
 

@@ -49,6 +49,9 @@ class ImplementMethodsAdapter extends ClassAdapter {
 				// this is therefore an error condition.
 				throw new BundleCreationException("The method " + name + " is abstract yet it's return type is not a String.");
 			}
+			if ((access & Opcodes.ACC_PUBLIC) == 0) {
+				throw new BundleCreationException("The method " + name + " must be public.");
+			}
 			Type[] types = Type.getArgumentTypes(desc);
 			String translation = translations.getProperty(name);
 			// If we are ignoring the
