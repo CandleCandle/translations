@@ -13,6 +13,10 @@ public final class BundleClassLoader extends ClassLoader {
 
 	public BundleClassLoader() { }
 
+	public boolean isClassDefined(String key) {
+		return classMap.containsKey(key);
+	}
+
 	@SuppressWarnings("unchecked")
 	Class<?> defineClass(String name, byte[] b) {
 		if(classMap.containsKey(name)) {

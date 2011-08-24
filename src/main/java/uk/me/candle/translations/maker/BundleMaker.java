@@ -26,7 +26,7 @@ import uk.me.candle.translations.BundleCreationException;
 public final class BundleMaker {
 	private static final Logger LOG = LoggerFactory.getLogger(BundleMaker.class);
 	private static BundleClassLoader bundleClassLoader = new BundleClassLoader();
-	
+
 	private BundleMaker() {
 		throw new AssertionError("Must not call this constructor");
 	}
@@ -54,8 +54,14 @@ public final class BundleMaker {
 		Properties translations,
 		BundleConfiguration configuration
 		) {
-		final Set<String> usedKeys = new HashSet<String>();
 		final String newName = getClassNameFor(cls, locale);
+
+		if (bundleClassLoader.isClassDefined(newName)) {
+			Class<?> result = bundleClassLoader.defineClass(newName, new byte[]{});
+			return getInstance((Class<T>)result, locale);
+		}
+
+		final Set<String> usedKeys = new HashSet<String>();
 
 		final ClassReader cr;
 		try {

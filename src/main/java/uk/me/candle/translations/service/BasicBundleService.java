@@ -27,6 +27,10 @@ public final class BasicBundleService implements BundleService {
 		this.cache = HashBasedTable.create();
 	}
 
+	public void setCurrent(Locale current) {
+		this.current = current;
+	}
+
 	@Override
 	public <T extends Bundle> T get(Class<T> bundleClass) {
 		return get(bundleClass, current);
