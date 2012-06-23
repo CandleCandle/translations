@@ -1,16 +1,15 @@
 package uk.me.candle.translations.maker;
 
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-class MethodImplementationAdapter extends MethodAdapter {
+class MethodImplementationAdapter extends MethodVisitor {
 	private String translation;
 	private String descriptor;
 	private String generatedClassName;
 	MethodImplementationAdapter(MethodVisitor mv, String descriptor, String translation, String generatedClassName) {
-		super(mv);
+		super(Opcodes.ASM4, mv);
 		this.translation = translation;
 		this.descriptor = descriptor;
 		this.generatedClassName = generatedClassName;

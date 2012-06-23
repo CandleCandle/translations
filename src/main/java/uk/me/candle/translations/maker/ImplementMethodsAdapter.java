@@ -7,7 +7,6 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.Set;
-import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -17,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import uk.me.candle.translations.BundleCreationException;
 import uk.me.candle.translations.conf.BundleConfiguration;
 
-class ImplementMethodsAdapter extends ClassAdapter {
+class ImplementMethodsAdapter extends ClassVisitor {
 	private static final Logger LOG = LoggerFactory.getLogger(ImplementMethodsAdapter.class);
 	private String newName;
 	private String baseName;
@@ -28,7 +27,7 @@ class ImplementMethodsAdapter extends ClassAdapter {
 	ImplementMethodsAdapter(ClassVisitor cv, Properties translations,
 			Set<String> usedKeys, Locale locale,
 			BundleConfiguration configuration) {
-		super(cv);
+		super(Opcodes.ASM4, cv);
 		this.translations = translations;
 		this.usedKeys = usedKeys;
 		this.configuration = configuration;
