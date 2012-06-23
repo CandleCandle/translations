@@ -76,6 +76,7 @@
 
 	<scm>
 		<connection>scm:git:http://git.candle.me.uk/translations.git</connection>
+		<developerConnection>scm:git:file://.</developerConnection>
 	</scm>
 
 	<distributionManagement>
