@@ -71,6 +71,9 @@ class ImplementMethodsAdapter extends ClassVisitor {
 			usedKeys.add(name); // add the key for later use - checking for configuration.isIgnoreExtra().
 			MethodVisitor mv = cv.visitMethod(access - Opcodes.ACC_ABSTRACT, name, desc, signature, exceptions);
 			return new MethodImplementationAdapter(mv, desc, translation, newName);
+		} else if (name.equals("<init>")) {
+			MethodVisitor mv = cv.visitMethod(access, name, desc, signature, exceptions);
+			return new ConstructorImplementationAdapter(mv, baseName);
 		} else {
 			return cv.visitMethod(access, name, desc, signature, exceptions);
 		}

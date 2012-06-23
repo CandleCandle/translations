@@ -12,7 +12,7 @@ public abstract class SubPatternBundle extends Bundle {
 
 	static Properties getProperties() {
 		Properties p = new Properties();
-    p.setProperty("subPatternParameter", "{0} {1}{2,choice,0#|1# flag}{3,choice,0#|0< - {4}}");
+		p.setProperty("subPatternParameter", "{0} {1}{2,choice,0#|1# flag}{3,choice,0#|0< - {4}}");
 
 		return p;
 	}
