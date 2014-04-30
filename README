@@ -2,13 +2,24 @@
 
 Type safe, method orientated i18n library.
 
-
-
-
-
 Example code:
 
-https://github.com/CandleCandle/translations-examples
+https://github.com/CandleCandle/translations-example
+
+
+Motivation:
+
+I18n properties files get bloated and take a lot of time to maintain. This is mostly due to the fact that they are "stringly typed". The i18n keys are strings in your code, and thus, they can be programmaticly generated, passed around and mangled. This manipulation leads to you not knowing if you can remove a translation key or not; thus your translators can end up translating phrases that are never used.
+
+It is possible to detect if a key is used if you run your application with every possible input and every possible output, this is not a prospect I like. Statically typed languages, like Java allow you to identify, through static analysis, if a method or field is used.
+
+This project aims to provide a way of testing that your i18n files are used to their full extent without bloat and without excessive re-use.
+
+By defining a small class it is possible to then use your IDE to search for uses of the methods that generate your i18n values. It is also possible now to add unit tests that check to see if your translation files are complete.
+
+Another bonus for using methods is that parameters can be passed, allowing the library to wrap an instance of a java.text.MessageFormat. cleaning up the call-sites dramatically.
+
+
 
 
 
