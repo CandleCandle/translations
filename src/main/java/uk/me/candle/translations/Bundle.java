@@ -50,7 +50,7 @@ import java.util.Locale;
  *iHaveSomeOranges=I have {0,choice,0#are no oranges|1# one orange|1&lt;are {0,number,integer} oranges}.
  *iHaveAFewArguments=o={0} z={1} b={2} c={3} s={4} i={5} l={6} f={7} d={8}
  * }</pre>
- * Observe that it is the the MessageFormat syntax requires '' to output a single ' character.<br /><br />
+ * Observe that it is the the MessageFormat syntax requires '' to output a single ' character.
  *
  * When the class is loaded (without a properties specified in the load() method)  it will look for a properties
  * file in the same package as the class, with the same name as the class and
