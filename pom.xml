@@ -8,6 +8,12 @@
 	<name>Translations</name>
 	<url>http://maven.apache.org</url>
 	<description>Method based i18n solution</description>
+	<developers>
+		<developer>
+			<id>candle</id>
+			<name>Andrew Wheat</name>
+		</developer>
+	</developers>
 	<build>
 		<plugins>
 			<plugin>
