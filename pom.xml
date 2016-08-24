@@ -125,8 +125,8 @@
 	</reporting>
 
 	<scm>
-		<connection>git@github.com:CandleCandle/translations.git</connection>
-		<developerConnection>git@github.com:CandleCandle/translations.git</developerConnection>
+		<connection>scm:git:git@github.com:CandleCandle/translations.git</connection>
+		<developerConnection>scm:git:git@github.com:CandleCandle/translations.git</developerConnection>
 	</scm>
 
 	<distributionManagement>
