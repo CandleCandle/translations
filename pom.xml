@@ -7,6 +7,7 @@
 	<version>2.0.3-SNAPSHOT</version>
 	<name>Translations</name>
 	<url>http://maven.apache.org</url>
+	<description>Method based i18n solution</description>
 	<build>
 		<plugins>
 			<plugin>
